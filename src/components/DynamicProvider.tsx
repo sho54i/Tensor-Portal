@@ -7,7 +7,7 @@ export default function DynamicProvider({ children }: { children: React.ReactNod
   const environmentId = process.env.NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID;
 
   if (!environmentId) {
-    throw new Error('NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID is not defined');
+    return <>{children}</>;
   }
 
   return (
