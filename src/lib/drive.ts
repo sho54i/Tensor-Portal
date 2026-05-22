@@ -15,10 +15,11 @@ export type DirReport = {
 function requireEnv() {
   const apiKey = process.env.GOOGLE_DRIVE_API_KEY;
   const folderId = process.env.DIR_FOLDER_ID;
-  if (!apiKey || !folderId) {
-    return null;
-  }
-  return { apiKey, folderId };
+  const missing: string[] = [];
+  if (!apiKey) missing.push("GOOGLE_DRIVE_API_KEY");
+  if (!folderId) missing.push("DIR_FOLDER_ID");
+  if (missing.length > 0) return { missing };
+  return { apiKey: apiKey!, folderId: folderId! };
 }
 
 async function listFolder(folderId: string, apiKey: string): Promise<DriveFile[]> {
@@ -51,10 +52,11 @@ async function downloadFile(fileId: string, apiKey: string): Promise<string> {
 
 export async function getLatestDirReport(): Promise<
   | { ok: true; data: DirReport; siblings: DriveFile[] }
-  | { ok: false; reason: "unconfigured" | "empty" | "error"; message?: string }
+  | { ok: false; reason: "unconfigured"; missing: string[] }
+  | { ok: false; reason: "empty" | "error"; message?: string }
 > {
   const env = requireEnv();
-  if (!env) return { ok: false, reason: "unconfigured" };
+  if ("missing" in env) return { ok: false, reason: "unconfigured", missing: env.missing };
 
   try {
     const files = await listFolder(env.folderId, env.apiKey);

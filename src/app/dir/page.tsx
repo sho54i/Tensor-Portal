@@ -7,6 +7,9 @@ export const metadata = {
   description: "Daily Intelligence Report from Dragon Investigation Group.",
 };
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 function formatTime(iso: string): string {
   const d = new Date(iso);
   return d.toISOString().replace("T", " ").slice(0, 16) + " UTC";
@@ -93,10 +96,11 @@ export default async function DirPage() {
               <>
                 <h3 className="operator-text text-xs text-[#666] mb-4">Configure Drive Access</h3>
                 <p className="text-[#888] text-sm leading-relaxed mb-4">
-                  Set <code className="text-white font-mono">GOOGLE_DRIVE_API_KEY</code> and{" "}
-                  <code className="text-white font-mono">DIR_FOLDER_ID</code> environment
-                  variables. The DIR folder must be shared as &quot;Anyone with the link can
-                  view&quot; for the API key to read it.
+                  Missing environment variable
+                  {result.missing.length > 1 ? "s" : ""}:{" "}
+                  {result.missing.map((m) => (
+                    <code key={m} className="text-white font-mono mr-2">{m}</code>
+                  ))}
                 </p>
                 <p className="text-[#666] text-xs font-mono">
                   DIR_FOLDER_ID=1Jr1y14cxOjy1VAy94HyQV_6PxX61_X3f
