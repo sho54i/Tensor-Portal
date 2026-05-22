@@ -1,7 +1,5 @@
 'use client';
 
-import { DynamicWidget } from '@dynamic-labs/sdk-react-core';
-
 export default function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-6 backdrop-blur-md border-b border-[#333]">
@@ -17,7 +15,6 @@ export default function Header() {
           <div className="w-2 h-2 rounded-full bg-[#50e3c2] animate-pulse"></div>
           ALL SYSTEMS OPERATIONAL
         </div>
-        <DynamicWidget />
       </div>
     </header>
   );
