@@ -2,6 +2,8 @@ import Header from "@/components/Header";
 import ChatPreview from "@/components/ChatPreview";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 const STACK_APPS = [
   {
     id: "entityos",
