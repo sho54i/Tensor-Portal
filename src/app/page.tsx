@@ -92,6 +92,35 @@ export default function Home() {
           </Link>
         </section>
 
+        <section id="folio" className="mb-24">
+          <div className="flex items-center justify-between mb-8 border-b border-[#1f1f1f] pb-4">
+            <h3 className="operator-text text-xs text-[#666]">Folio</h3>
+            <span className="text-[10px] text-[#444] font-mono">LONG-FORM</span>
+          </div>
+
+          <Link
+            href="/articles"
+            className="operator-card p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 group hover:border-[#666] transition-all"
+          >
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="operator-text text-[10px] text-[#666]">articles</span>
+                <span className="operator-text text-[10px] text-[#f59e0b]">VOL. 03</span>
+              </div>
+              <h4 className="text-2xl font-medium mb-2 group-hover:text-[#f59e0b] transition-colors">
+                Ground Truth — Folio
+              </h4>
+              <p className="text-[#888] text-sm leading-relaxed max-w-2xl">
+                Long-form technical digests. Cryptography, zkML, and the infrastructure
+                layer for autonomous agents.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 text-[10px] text-[#444] operator-text group-hover:text-white transition-colors">
+              BROWSE FOLIO <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+            </div>
+          </Link>
+        </section>
+
         <section id="stack" className="mb-24">
           <div className="flex items-center justify-between mb-8 border-b border-[#1f1f1f] pb-4">
             <h3 className="operator-text text-xs text-[#666]">System Modules</h3>

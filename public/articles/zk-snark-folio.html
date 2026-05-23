@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ground Truth — Folio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #c9991f;
+    --gold-light: #e8b83a;
+    --gold-dim: #b8922a;
+    --gold-muted: #7a6018;
+    --ink: #f0ead8;
+    --ink-mid: #c9c4b0;
+    --ink-dim: #9e9a88;
+    --ink-faint: #7a7868;
+    --ink-ghost: #5a5a48;
+    --ink-trace: #3a3a2a;
+    --bg: #0a0a08;
+    --bg-card: #0d0d0b;
+    --bg-deep: #080806;
+    --border: #1e1e16;
+    --border-dim: #1a1a12;
+    --border-ghost: #111108;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    border-bottom: 0.5px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 48px;
+  }
+
+  .nav-brand {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: var(--ink-ghost);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.15s;
+  }
+
+  .nav-links a:hover { color: var(--gold-dim); }
+
+  /* ── COVER ── */
+  .cover {
+    border-bottom: 0.5px solid var(--border);
+    padding: 5rem 2rem 4rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: end;
+  }
+
+  .cover-left {}
+
+  .series-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .series-tag::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 0.5px;
+    background: var(--gold-dim);
+  }
+
+  .cover-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+  }
+
+  .cover-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .cover-deck {
+    font-size: 1rem;
+    color: var(--ink-faint);
+    line-height: 1.75;
+    max-width: 440px;
+    margin-bottom: 2.5rem;
+  }
+
+  .cover-toc {
+    border-top: 0.5px solid var(--border);
+    padding-top: 1.5rem;
+  }
+
+  .toc-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: var(--ink-trace);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .toc-item {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 0.5px solid var(--border-ghost);
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+
+  .toc-item:last-child { border-bottom: none; }
+
+  .toc-item:hover .toc-item-title { color: var(--gold-dim); }
+
+  .toc-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--ink-trace);
+    flex-shrink: 0;
+    width: 20px;
+  }
+
+  .toc-item-title {
+    font-size: 13px;
+    color: var(--ink-ghost);
+    transition: color 0.15s;
+    flex: 1;
+  }
+
+  .toc-item-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    color: var(--gold-muted);
+    border: 0.5px solid var(--gold-muted);
+    padding: 1px 6px;
+    white-space: nowrap;
+  }
+
+  .cover-right {
+    padding-bottom: 0.5rem;
+  }
+
+  .cover-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-trace);
+    letter-spacing: 0.1em;
+    line-height: 2;
+    border-left: 1px solid var(--border);
+    padding-left: 1.5rem;
+  }
+
+  .cover-meta strong {
+    color: var(--ink-ghost);
+    font-weight: 400;
+  }
+
+  /* ── ARTICLE WRAPPER ── */
+  .article {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 4rem 2rem 6rem;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .article:last-of-type { border-bottom: none; }
+
+  /* ── ARTICLE HEADER ── */
+  .article-header {
+    margin-bottom: 3.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 0.5px solid var(--border-dim);
+  }
+
+  .article-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .article-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+  }
+
+  .article-title em { font-style: italic; color: var(--gold); }
+
+  .article-deck {
+    font-size: 1rem;
+    color: var(--ink-faint);
+    line-height: 1.7;
+    max-width: 580px;
+    margin-bottom: 1.25rem;
+    font-weight: 300;
+  }
+
+  .article-byline {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-trace);
+    letter-spacing: 0.1em;
+  }
+
+  .article-byline a,
+  .colophon-right a {
+    color: var(--gold-dim);
+    text-decoration: none;
+    border-bottom: 0.5px solid var(--border);
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .article-byline a:hover,
+  .colophon-right a:hover {
+    color: var(--gold-light);
+    border-bottom-color: var(--gold-dim);
+  }
+
+  /* ── SECTION RULE ── */
+  .rule {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 3rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .rule span {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .rule::after {
+    content: '';
+    flex: 1;
+    height: 0.5px;
+    background: var(--border);
+  }
+
+  /* ── PROSE ── */
+  .prose p {
+    font-size: 14.5px;
+    color: var(--ink-faint);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+
+  .prose p strong {
+    color: var(--ink-mid);
+    font-weight: 500;
+  }
+
+  .prose code {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--gold);
+    background: var(--bg-card);
+    padding: 1px 5px;
+    border: 0.5px solid var(--border);
+  }
+
+  /* ── CONCEPT GRID (ZK) ── */
+  .concept-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border-dim);
+    border: 1px solid var(--border-dim);
+    margin: 1.5rem 0 2.5rem;
+  }
+
+  .concept-cell {
+    background: var(--bg-card);
+    padding: 1.4rem;
+    position: relative;
+  }
+
+  .concept-cell::after {
+    content: attr(data-glyph);
+    position: absolute;
+    top: 1.1rem;
+    right: 1.1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--border);
+    letter-spacing: 0.05em;
+  }
+
+  .concept-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.18em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .concept-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .concept-body {
+    font-size: 12px;
+    color: var(--ink-ghost);
+    line-height: 1.65;
+  }
+
+  /* ── PIPELINE ── */
+  .pipeline-scroll { overflow-x: auto; margin-bottom: 0.5rem; }
+
+  .pipeline {
+    display: flex;
+    min-width: 640px;
+  }
+
+  .p-step {
+    flex: 1;
+    padding: 1.1rem 0.9rem;
+    border: 0.5px solid var(--border);
+    background: var(--bg-card);
+    position: relative;
+  }
+
+  .p-step:not(:last-child)::after {
+    content: '›';
+    position: absolute;
+    right: -9px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold-dim);
+    font-size: 16px;
+    z-index: 2;
+    background: var(--bg);
+    padding: 0 2px;
+  }
+
+  .p-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--border);
+    margin-bottom: 0.3rem;
+  }
+
+  .p-name {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-mid);
+    margin-bottom: 0.3rem;
+    line-height: 1.3;
+  }
+
+  .p-sub {
+    font-size: 10.5px;
+    color: var(--ink-ghost);
+    line-height: 1.45;
+  }
+
+  .p-badge {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    background: var(--bg-deep);
+    color: var(--gold-dim);
+    padding: 2px 6px;
+    margin-top: 0.4rem;
+    border: 0.5px solid var(--border);
+  }
+
+  .pipe-note {
+    font-size: 10.5px;
+    color: var(--ink-trace);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.06em;
+    margin-bottom: 2rem;
+  }
+
+  /* ── TWO COL ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  /* ── CODE BLOCK ── */
+  .code-wrap {
+    background: var(--bg-deep);
+    border: 0.5px solid var(--border);
+    border-left: 2px solid var(--gold-dim);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .code-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--ink-trace);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.6rem;
+  }
+
+  .code-wrap pre {
+    font-family: 'DM Mono', monospace;
+    font-size: 11.5px;
+    color: var(--ink-ghost);
+    line-height: 1.7;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  .code-wrap pre .c { color: var(--border); }
+  .code-wrap pre .k { color: var(--gold-dim); }
+  .code-wrap pre .s { color: #6a9070; }
+  .code-wrap pre .fn { color: #7a90b8; }
+  .code-wrap pre .n { color: var(--ink-mid); }
+
+  /* ── COST TABLE ── */
+  .table-wrap { overflow-x: auto; margin-bottom: 2rem; }
+
+  .cost-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 560px;
+  }
+
+  .cost-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: var(--ink-ghost);
+    text-transform: uppercase;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 0.5px solid var(--border);
+    text-align: left;
+    font-weight: 400;
+  }
+
+  .cost-table td {
+    font-size: 12px;
+    padding: 0.65rem 0.75rem;
+    border-bottom: 0.5px solid var(--border-ghost);
+    color: var(--ink-faint);
+    vertical-align: top;
+  }
+
+  .cost-table td:first-child {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-mid);
+  }
+
+  .cost-table td.ok { color: #5a8a68; }
+  .cost-table td.warn { color: var(--gold-dim); }
+  .cost-table td.bad { color: #8a4a4a; }
+  .cost-table tr:last-child td { border-bottom: none; }
+
+  /* ── BAR CHART ── */
+  .bar-wrap { margin-bottom: 1.5rem; }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .bar-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-ghost);
+    width: 110px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 5px;
+    background: var(--border-ghost);
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: var(--gold-dim);
+  }
+
+  .bar-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-trace);
+    width: 80px;
+  }
+
+  /* ── SWEET SPOT CARDS ── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .s-card {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-top: 1px solid var(--gold-dim);
+    padding: 1.1rem;
+  }
+
+  .s-card-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  .s-card-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-mid);
+    margin-bottom: 0.4rem;
+    line-height: 1.3;
+  }
+
+  .s-card-body {
+    font-size: 11.5px;
+    color: var(--ink-ghost);
+    line-height: 1.55;
+  }
+
+  /* ── COMPAT LIST ── */
+  .compat-list { margin-bottom: 2rem; }
+
+  .compat-row {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 0.5px solid var(--border-ghost);
+    align-items: flex-start;
+  }
+
+  .compat-row:last-child { border-bottom: none; }
+
+  .compat-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+
+  .dot-go { background: #5a8a68; }
+  .dot-warn { background: var(--gold-dim); }
+  .dot-no { background: #6a3838; }
+
+  .compat-name {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--ink-mid);
+    margin-bottom: 0.2rem;
+  }
+
+  .compat-note {
+    font-size: 11.5px;
+    color: var(--ink-ghost);
+    line-height: 1.5;
+  }
+
+  /* ── MINA BOX ── */
+  .mina-box {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-top: 1px solid var(--gold-dim);
+    padding: 2rem;
+    margin: 2rem 0;
+  }
+
+  .mina-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .mina-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: var(--ink);
+  }
+
+  .mina-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--gold-dim);
+    border: 0.5px solid var(--gold-dim);
+    padding: 2px 8px;
+    text-transform: uppercase;
+  }
+
+  .mina-deck {
+    font-size: 13px;
+    color: var(--ink-ghost);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .mina-facts {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+
+  .mina-fact {
+    text-align: center;
+    padding: 1rem;
+    border: 0.5px solid var(--border);
+  }
+
+  .mina-fact-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--gold);
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .mina-fact-label {
+    font-size: 10px;
+    color: var(--ink-ghost);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── AGENT STACK (Article 2) ── */
+  .plane-header {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-left: 2px solid var(--gold-dim);
+    margin-bottom: 1rem;
+  }
+
+  .plane-icon {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--gold-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .plane-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .plane-desc {
+    font-size: 12px;
+    color: var(--ink-ghost);
+    line-height: 1.5;
+  }
+
+  .layer-list { margin-bottom: 2.5rem; }
+
+  .layer-item {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 0;
+    border-bottom: 0.5px solid var(--border-ghost);
+  }
+
+  .layer-item:last-child { border-bottom: none; }
+
+  .layer-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-trace);
+    padding: 1.1rem 0.75rem 1.1rem 0;
+    border-right: 0.5px solid var(--border-ghost);
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding-right: 0.75rem;
+  }
+
+  .layer-content {
+    padding: 1.1rem 0 1.1rem 1.1rem;
+  }
+
+  .layer-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-mid);
+    margin-bottom: 0.25rem;
+    line-height: 1.3;
+  }
+
+  .layer-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--gold-dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  .layer-body {
+    font-size: 12.5px;
+    color: var(--ink-ghost);
+    line-height: 1.6;
+  }
+
+  .layer-body strong {
+    color: var(--ink-faint);
+    font-weight: 500;
+  }
+
+  .layer-vendors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.6rem;
+  }
+
+  .vendor-chip {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--ink-ghost);
+    background: var(--bg-deep);
+    border: 0.5px solid var(--border);
+    padding: 2px 7px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── STRATEGIC CALLOUT ── */
+  .callout {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-top: 1px solid var(--gold-dim);
+    padding: 1.75rem;
+    margin: 2rem 0;
+  }
+
+  .callout-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+
+  .callout-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--ink);
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    line-height: 1.3;
+  }
+
+  .callout-body {
+    font-size: 13px;
+    color: var(--ink-ghost);
+    line-height: 1.7;
+  }
+
+  .callout-body strong {
+    color: var(--ink-faint);
+    font-weight: 500;
+  }
+
+  /* ── STAT ROW ── */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border-dim);
+    border: 1px solid var(--border-dim);
+    margin: 1.5rem 0;
+  }
+
+  .stat-cell {
+    background: var(--bg-card);
+    padding: 1.25rem 1rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--gold);
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .stat-label {
+    font-size: 10.5px;
+    color: var(--ink-ghost);
+    line-height: 1.4;
+  }
+
+  /* ── COLOPHON ── */
+  .colophon {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 2rem 3rem;
+    border-top: 0.5px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .colophon-left {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-trace);
+    letter-spacing: 0.1em;
+    line-height: 2;
+  }
+
+  .colophon-right {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--ink-trace);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: right;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 680px) {
+    .cover { grid-template-columns: 1fr; gap: 2rem; }
+    .concept-grid { grid-template-columns: 1fr 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+    .card-grid { grid-template-columns: 1fr 1fr; }
+    .mina-facts { grid-template-columns: repeat(2, 1fr); }
+    .stat-row { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 440px) {
+    .concept-grid { grid-template-columns: 1fr; }
+    .card-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="site-nav">
+  <div class="nav-brand">Ground Truth — Folio</div>
+  <ul class="nav-links">
+    <li><a href="#zk-snark">ZK-SNARK</a></li>
+    <li><a href="#zkml">zkML</a></li>
+    <li><a href="#agent-stack">Agent Stack</a></li>
+  </ul>
+</nav>
+
+<!-- COVER -->
+<header class="cover">
+  <div class="cover-left">
+    <div class="series-tag">Ground Truth Series — Vol. 03</div>
+    <h1 class="cover-title">Proof,<br><em>Trust,</em><br>Market.</h1>
+    <p class="cover-deck">From zero-knowledge cryptography to the emerging transaction rails of machine labour — a technical digest across three articles.</p>
+    <nav class="cover-toc">
+      <div class="toc-label">Contents</div>
+      <a href="#zk-snark" class="toc-item">
+        <span class="toc-num">01</span>
+        <span class="toc-item-title">ZK-SNARK Folio — anatomy, pipeline, crypto & AGI angles</span>
+        <span class="toc-item-tag">Cryptography</span>
+      </a>
+      <a href="#zkml" class="toc-item">
+        <span class="toc-num">02</span>
+        <span class="toc-item-title">ezkl & Verifiable AI Inference — costs, tools, practical path</span>
+        <span class="toc-item-tag">zkML</span>
+      </a>
+      <a href="#agent-stack" class="toc-item">
+        <span class="toc-num">03</span>
+        <span class="toc-item-title">The Technical Stack for Autonomous Agents — three planes, ten layers</span>
+        <span class="toc-item-tag">Markets</span>
+      </a>
+    </nav>
+  </div>
+  <div class="cover-right">
+    <div class="cover-meta">
+      <strong>Series</strong> — Ground Truth<br>
+      <strong>Volume</strong> — 03 / 2026<br>
+      <strong>Domains</strong> — ZK Cryptography<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zkML / Verifiable AI<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agentic Infrastructure<br>
+      <strong>Articles</strong> — 03<br>
+      <strong>Date</strong> — May 2026
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- ARTICLE 01 — ZK-SNARK FOLIO                -->
+<!-- ═══════════════════════════════════════════ -->
+<article class="article" id="zk-snark">
+  <header class="article-header">
+    <div class="article-tag">Article 01 — Cryptography</div>
+    <h2 class="article-title">ZK-<em>SNARK</em> Folio</h2>
+    <p class="article-deck">A proof system where one party can convince another a statement is true — revealing nothing beyond that truth itself. Compact, fast, and increasingly central to verifiable AI.</p>
+    <div class="article-byline">Ground Truth Series / Zero-Knowledge Proof Systems</div>
+  </header>
+
+  <div class="rule"><span>01 — Core anatomy</span></div>
+
+  <div class="concept-grid">
+    <div class="concept-cell" data-glyph="Z">
+      <div class="concept-label">Zero-Knowledge</div>
+      <div class="concept-name">Nothing Leaked</div>
+      <div class="concept-body">The verifier learns only that a statement is true. No witness, no secret, no input data is revealed. A prover can confirm knowledge of a private key without exposing it.</div>
+    </div>
+    <div class="concept-cell" data-glyph="S">
+      <div class="concept-label">Succinct</div>
+      <div class="concept-name">Small Proofs</div>
+      <div class="concept-body">Proof size is O(log n) or constant — tiny relative to the computation. Verification is orders of magnitude cheaper than re-running the computation itself.</div>
+    </div>
+    <div class="concept-cell" data-glyph="NI">
+      <div class="concept-label">Non-Interactive</div>
+      <div class="concept-name">One Message</div>
+      <div class="concept-body">No back-and-forth challenge rounds. The prover sends a single proof string. Enabled by the Fiat-Shamir heuristic — transforming interactive protocols into offline artifacts.</div>
+    </div>
+    <div class="concept-cell" data-glyph="A">
+      <div class="concept-label">Argument</div>
+      <div class="concept-name">Computational Soundness</div>
+      <div class="concept-body">Soundness holds against computationally bounded adversaries. A proof cannot be forged without solving a hard mathematical problem.</div>
+    </div>
+    <div class="concept-cell" data-glyph="K">
+      <div class="concept-label">Knowledge</div>
+      <div class="concept-name">Witness Extraction</div>
+      <div class="concept-body">The prover demonstrably possesses a valid witness — not just that one exists. This is what separates a proof of knowledge from a proof of existence.</div>
+    </div>
+    <div class="concept-cell" data-glyph="CRS">
+      <div class="concept-label">Trusted Setup</div>
+      <div class="concept-name">Common Reference String</div>
+      <div class="concept-body">Most SNARKs require a CRS — structured public parameters from a ceremony. If toxic waste from setup isn't destroyed, the system is compromised.</div>
+    </div>
+  </div>
+
+  <div class="rule"><span>02 — Proof pipeline (Groth16)</span></div>
+
+  <div class="pipeline-scroll">
+    <div class="pipeline">
+      <div class="p-step">
+        <div class="p-num">01</div>
+        <div class="p-name">Computation to circuit</div>
+        <div class="p-sub">Express as arithmetic circuit over finite field. Every gate = addition or multiplication.</div>
+        <div class="p-badge">float ops</div>
+      </div>
+      <div class="p-step">
+        <div class="p-num">02</div>
+        <div class="p-name">R1CS constraints</div>
+        <div class="p-sub">Flatten into Rank-1 Constraint System: (A·z) ∘ (B·z) = C·z, witness vector z.</div>
+        <div class="p-badge">constraints</div>
+      </div>
+      <div class="p-step">
+        <div class="p-num">03</div>
+        <div class="p-name">QAP encoding</div>
+        <div class="p-sub">Encode R1CS as Quadratic Arithmetic Program via Lagrange polynomial interpolation.</div>
+        <div class="p-badge">polynomials</div>
+      </div>
+      <div class="p-step">
+        <div class="p-num">04</div>
+        <div class="p-name">Elliptic curve pairings</div>
+        <div class="p-sub">Evaluate polynomials at encrypted points on BN254 or BLS12-381 curves.</div>
+        <div class="p-badge">pairings</div>
+      </div>
+      <div class="p-step">
+        <div class="p-num">05</div>
+        <div class="p-name">Proof output</div>
+        <div class="p-sub">Prover outputs ~256 bytes. Verifier checks with three pairing operations. Constant time.</div>
+        <div class="p-badge">~256 bytes</div>
+      </div>
+    </div>
+  </div>
+  <p class="pipe-note" style="margin-bottom: 2.5rem;">Used in Zcash, Tornado Cash, and most production SNARKs.</p>
+
+  <div class="rule"><span>03 — AGI & cognitive system applications</span></div>
+
+  <div class="card-grid" style="grid-template-columns: repeat(2, 1fr); margin-bottom: 2.5rem;">
+    <div class="s-card">
+      <div class="s-card-tag">Task handling</div>
+      <div class="s-card-title">Verifiable task execution</div>
+      <div class="s-card-body">An agent proves it ran a task correctly without revealing its private reasoning chain or weights. A coordinator verifies a subtask result without re-running it — enabling trustless agent delegation in multi-agent pipelines.</div>
+    </div>
+    <div class="s-card">
+      <div class="s-card-tag">Memory architecture</div>
+      <div class="s-card-title">Private memory attestation</div>
+      <div class="s-card-body">A ZK proof attests that a memory retrieval was computed correctly over a private knowledge base. In a LAP-style memory system, external verifiers can confirm identity-core consistency without reading the document.</div>
+    </div>
+    <div class="s-card">
+      <div class="s-card-tag">Alignment & safety</div>
+      <div class="s-card-title">Constrained behaviour proofs</div>
+      <div class="s-card-body">Prove an agent's output was generated within a constrained policy — without exposing the policy or model weights. An AGI system could publish a proof its decision satisfies alignment constraints, verifiable by any third party.</div>
+    </div>
+    <div class="s-card">
+      <div class="s-card-tag">Identity & provenance</div>
+      <div class="s-card-title">Entity identity anchoring</div>
+      <div class="s-card-body">ZK proofs anchor an agent's identity across sessions without leaking history. An entity proves it is the same identity as a prior session — using a private identity witness — without replaying any prior context.</div>
+    </div>
+    <div class="s-card">
+      <div class="s-card-tag">Multi-agent trust</div>
+      <div class="s-card-title">Trustless knowledge sharing</div>
+      <div class="s-card-body">Agent A proves to Agent B it derived a conclusion from a valid reasoning chain — without exposing the full chain. Epistemic trust without transparency: an agent coalition where each member attests to contribution quality.</div>
+    </div>
+    <div class="s-card">
+      <div class="s-card-tag">zkML</div>
+      <div class="s-card-title">Verifiable inference</div>
+      <div class="s-card-body">The emerging zkML field encodes neural network inference as arithmetic circuits. ezkl, RISC Zero, and Modulus Labs demonstrate this today. Expensive, but falling fast with GPU acceleration.</div>
+    </div>
+  </div>
+
+  <div class="rule"><span>04 — Mina protocol</span></div>
+
+  <div class="mina-box">
+    <div class="mina-header">
+      <div class="mina-title">Mina Protocol</div>
+      <div class="mina-badge">22KB blockchain</div>
+    </div>
+    <p class="mina-deck">The only blockchain with a constant-size state — achieved by recursively composing ZK-SNARKs. Instead of storing the full chain, each block contains a proof that the previous state was valid. Nodes verify a single proof, forever.</p>
+    <div class="mina-facts">
+      <div class="mina-fact">
+        <div class="mina-fact-num">22</div>
+        <div class="mina-fact-label">KB — constant chain size</div>
+      </div>
+      <div class="mina-fact">
+        <div class="mina-fact-num">Kimchi</div>
+        <div class="mina-fact-label">custom PLONK prover</div>
+      </div>
+      <div class="mina-fact">
+        <div class="mina-fact-num">o1js</div>
+        <div class="mina-fact-label">TypeScript zkApp SDK</div>
+      </div>
+      <div class="mina-fact">
+        <div class="mina-fact-num">zkApps</div>
+        <div class="mina-fact-label">client-side proof dApps</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rule"><span>05 — Crypto ecosystem</span></div>
+
+  <div class="two-col">
+    <div>
+      <div class="concept-label" style="margin-bottom: 0.75rem;">Active protocols</div>
+      <div class="compat-list">
+        <div class="compat-row">
+          <div class="compat-dot dot-go"></div>
+          <div>
+            <div class="compat-name">Zcash (Sapling / Orchard)</div>
+            <div class="compat-note">Private transactions using Groth16 then Halo2. Oldest production SNARK deployment. Proves spend validity without revealing sender, receiver, or amount.</div>
+          </div>
+        </div>
+        <div class="compat-row">
+          <div class="compat-dot dot-go"></div>
+          <div>
+            <div class="compat-name">zkSync / StarkNet</div>
+            <div class="compat-note">ZK-rollups for Ethereum L2. Prove batches of transactions off-chain, post one proof on-chain. Massively reduces gas costs while inheriting Ethereum security.</div>
+          </div>
+        </div>
+        <div class="compat-row">
+          <div class="compat-dot dot-warn"></div>
+          <div>
+            <div class="compat-name">Polygon zkEVM</div>
+            <div class="compat-note">Proves full EVM execution in zero-knowledge. Any Ethereum contract runs with cryptographic verifiability. The technically hardest ZK project to date.</div>
+          </div>
+        </div>
+        <div class="compat-row">
+          <div class="compat-dot dot-go"></div>
+          <div>
+            <div class="compat-name">Semaphore / Worldcoin</div>
+            <div class="compat-note">ZK identity systems. Prove membership in a set without revealing which member you are. Privacy-preserving credentials at scale.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="concept-label" style="margin-bottom: 0.75rem;">Proof system variants</div>
+      <div class="compat-list">
+        <div class="compat-row">
+          <div class="compat-dot dot-go"></div>
+          <div>
+            <div class="compat-name">Groth16</div>
+            <div class="compat-note">Smallest proofs, fastest verification. Requires per-circuit trusted setup. The gold standard for succinct proofs.</div>
+          </div>
+        </div>
+        <div class="compat-row">
+          <div class="compat-dot dot-go"></div>
+          <div>
+            <div class="compat-name">PLONK / Halo2</div>
+            <div class="compat-note">Universal setup — one CRS for all circuits. Halo2 adds recursive composition without a trusted setup via polynomial commitments.</div>
+          </div>
+        </div>
+        <div class="compat-row">
+          <div class="compat-dot dot-go"></div>
+          <div>
+            <div class="compat-name">STARKs</div>
+            <div class="compat-note">No trusted setup, post-quantum secure, larger proofs (~100KB). Transparency is the key advantage — hash-function based, no elliptic curve assumptions.</div>
+          </div>
+        </div>
+        <div class="compat-row">
+          <div class="compat-dot dot-warn"></div>
+          <div>
+            <div class="compat-name">Nova / Folding schemes</div>
+            <div class="compat-note">Incrementally Verifiable Computation. Fold multiple computation steps into one proof without recursion overhead. Ideal for proving long sequential agent trajectories.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- ARTICLE 02 — ZKML                          -->
+<!-- ═══════════════════════════════════════════ -->
+<article class="article" id="zkml">
+  <header class="article-header">
+    <div class="article-tag">Article 02 — zkML</div>
+    <h2 class="article-title">ezkl &amp; Verifiable<br><em>AI Inference</em></h2>
+    <p class="article-deck">How neural network layers become arithmetic circuits, what it costs to prove them, and where the frontier is moving.</p>
+    <div class="article-byline">Ground Truth Series / Verifiable Machine Learning</div>
+  </header>
+
+  <div class="rule"><span>01 — What ezkl actually does</span></div>
+
+  <div class="two-col">
+    <div class="prose">
+      <p><strong>ezkl</strong> is a Python/Rust library that takes a neural network in ONNX format and compiles it into a ZK circuit using the <strong>Halo2</strong> proof system. Every floating-point operation in a neural net is approximated as arithmetic over a finite field — ezkl handles that translation automatically.</p>
+      <p>The output is a <strong>proving key</strong>, a <strong>verification key</strong>, and a <strong>Solidity verifier contract</strong>. Anyone with the verifier key can check a proof in milliseconds, without access to the model weights or input data.</p>
+      <p>Weights can be kept private — the proof only attests to the structure of computation, not the values. The prover is the model owner; the verifier can be on-chain (Ethereum) or off-chain.</p>
+    </div>
+    <div>
+      <div class="code-label">Install + basic workflow</div>
+      <div class="code-wrap"><pre><span class="c"># install</span>
+<span class="fn">pip</span> install ezkl
+
+<span class="k">import</span> <span class="n">ezkl</span>
+
+<span class="c"># 1. export model to ONNX</span>
+<span class="fn">torch.onnx.export</span>(model, dummy,
+    <span class="s">"model.onnx"</span>)
+
+<span class="c"># 2. generate settings</span>
+<span class="k">await</span> ezkl.<span class="fn">gen_settings</span>(
+    <span class="s">"model.onnx"</span>, <span class="s">"settings.json"</span>)
+
+<span class="c"># 3. compile circuit</span>
+<span class="k">await</span> ezkl.<span class="fn">compile_circuit</span>(
+    <span class="s">"model.onnx"</span>, <span class="s">"model.compiled"</span>,
+    <span class="s">"settings.json"</span>)
+
+<span class="c"># 4. trusted setup (once per circuit)</span>
+<span class="k">await</span> ezkl.<span class="fn">get_srs</span>(<span class="s">"settings.json"</span>)
+<span class="k">await</span> ezkl.<span class="fn">setup</span>(...)
+
+<span class="c"># 5. generate witness + prove</span>
+<span class="k">await</span> ezkl.<span class="fn">gen_witness</span>(...)
+<span class="k">await</span> ezkl.<span class="fn">prove</span>(...)
+
+<span class="c"># 6. verify anywhere — ms</span>
+<span class="k">await</span> ezkl.<span class="fn">verify</span>(<span class="s">"proof.json"</span>, ...)</pre></div>
+    </div>
+  </div>
+
+  <div class="rule"><span>02 — The compilation pipeline</span></div>
+
+  <div class="pipeline-scroll">
+    <div class="pipeline">
+      <div class="p-step">
+        <div class="p-num">01</div>
+        <div class="p-name">ONNX model</div>
+        <div class="p-sub">PyTorch / TF exported to standard graph IR</div>
+        <div class="p-badge">float32 ops</div>
+      </div>
+      <div class="p-step">
+        <div class="p-num">02</div>
+        <div class="p-name">Quantization</div>
+        <div class="p-sub">Weights scaled to fixed-point integers mod field prime</div>
+        <div class="p-badge">scale factor</div>
+      </div>
+      <div class="p-step">
+        <div class="p-num">03</div>
+        <div class="p-name">Circuit layout</div>
+        <div class="p-sub">Each op becomes Halo2 gate rows — matmul, relu, softmax</div>
+        <div class="p-badge">constraints</div>
+      </div>
+      <div class="p-step">
+        <div class="p-num">04</div>
+        <div class="p-name">Witness gen</div>
+        <div class="p-sub">Run inference, record all intermediates as field elements</div>
+        <div class="p-badge">private</div>
+      </div>
+      <div class="p-step">
+        <div class="p-num">05</div>
+        <div class="p-name">Prove</div>
+        <div class="p-sub">KZG polynomial commitments over BN254. Output ≈ 3–6 KB</div>
+        <div class="p-badge">proof.json</div>
+      </div>
+      <div class="p-step">
+        <div class="p-num">06</div>
+        <div class="p-name">Verify</div>
+        <div class="p-sub">3 pairing checks. On-chain via Solidity, or local in ms</div>
+        <div class="p-badge">~300K gas</div>
+      </div>
+    </div>
+  </div>
+  <p class="pipe-note" style="margin-bottom: 2rem;">Higher scale = more precision, more constraints, slower proving — the fundamental trade-off.</p>
+
+  <div class="rule"><span>03 — Proving cost by layer type</span></div>
+
+  <div class="table-wrap">
+    <table class="cost-table">
+      <thead>
+        <tr>
+          <th>Layer / operation</th>
+          <th>Circuit rows</th>
+          <th>Prove (CPU)</th>
+          <th>Prove (GPU)</th>
+          <th>Feasibility</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Linear / Dense (64×64)</td>
+          <td>~4K</td>
+          <td class="ok">2–5s</td>
+          <td class="ok">&lt;1s</td>
+          <td class="ok">Production ready</td>
+        </tr>
+        <tr>
+          <td>ReLU / Sigmoid</td>
+          <td>~1K per activation</td>
+          <td class="ok">1–3s</td>
+          <td class="ok">&lt;1s</td>
+          <td class="ok">Production ready</td>
+        </tr>
+        <tr>
+          <td>Conv2D (3×3, 32 filters)</td>
+          <td>~50K</td>
+          <td class="warn">30–90s</td>
+          <td class="ok">5–15s</td>
+          <td class="warn">Feasible, costly</td>
+        </tr>
+        <tr>
+          <td>Softmax</td>
+          <td>~8K (range proofs)</td>
+          <td class="warn">10–30s</td>
+          <td class="ok">3–8s</td>
+          <td class="warn">Doable, tricky</td>
+        </tr>
+        <tr>
+          <td>Attention head (128-dim)</td>
+          <td>~200K–1M</td>
+          <td class="bad">10–60 min</td>
+          <td class="warn">2–10 min</td>
+          <td class="warn">Research stage</td>
+        </tr>
+        <tr>
+          <td>Full transformer block (BERT-tiny)</td>
+          <td>~5M+</td>
+          <td class="bad">Hours</td>
+          <td class="bad">30–90 min</td>
+          <td class="bad">Not yet practical</td>
+        </tr>
+        <tr>
+          <td>ResNet-18 full forward pass</td>
+          <td>~50M</td>
+          <td class="bad">Days</td>
+          <td class="bad">Hours</td>
+          <td class="bad">Theoretical only</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="rule"><span>04 — Proving cost factors</span></div>
+
+  <div class="two-col">
+    <div class="prose">
+      <p>ZK circuits operate over <strong>finite fields</strong> — there are no floats. ezkl converts weights to fixed-point integers using a <code>scale</code> parameter (typically 7–16 bits of precision).</p>
+      <p>Nonlinear functions (ReLU, exp, softmax) require <strong>lookup tables</strong> — the circuit proves the function was evaluated from a pre-committed table of valid outputs. Expensive but well-understood.</p>
+      <p><strong>LayerNorm and GELU</strong> (used in most modern transformers) are the hardest. GELU requires approximation; LayerNorm involves division by a square root, requiring an inverse square root range proof.</p>
+      <p>The asymmetry is the whole point: a proof taking 90 seconds to generate takes <strong>3 milliseconds to verify</strong> — forever, by anyone, anywhere, with no access to your model.</p>
+    </div>
+    <div>
+      <div class="bar-wrap">
+        <div class="bar-row">
+          <div class="bar-label">model size</div>
+          <div class="bar-track"><div class="bar-fill" style="width:90%"></div></div>
+          <div class="bar-val">dominant</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">scale factor</div>
+          <div class="bar-track"><div class="bar-fill" style="width:75%"></div></div>
+          <div class="bar-val">very high</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">nonlinearities</div>
+          <div class="bar-track"><div class="bar-fill" style="width:65%"></div></div>
+          <div class="bar-val">high</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">lookup tables</div>
+          <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
+          <div class="bar-val">medium</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">input size</div>
+          <div class="bar-track"><div class="bar-fill" style="width:35%"></div></div>
+          <div class="bar-val">moderate</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">verification</div>
+          <div class="bar-track"><div class="bar-fill" style="width:3%"></div></div>
+          <div class="bar-val">~ms always</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rule"><span>05 — Practical sweet spot today</span></div>
+
+  <div class="card-grid">
+    <div class="s-card">
+      <div class="s-card-tag">Do this now</div>
+      <div class="s-card-title">Small classifiers</div>
+      <div class="s-card-body">2–4 layer MLPs with &lt;10K params. Intent detectors, small policy nets. Proving in seconds on CPU.</div>
+    </div>
+    <div class="s-card">
+      <div class="s-card-tag">Do this now</div>
+      <div class="s-card-title">Embedding attestation</div>
+      <div class="s-card-body">Prove a CLIP / sentence-transformer embedding was computed correctly from a committed input. Very cheap — one linear layer.</div>
+    </div>
+    <div class="s-card">
+      <div class="s-card-tag">Emerging</div>
+      <div class="s-card-title">CNN image proofs</div>
+      <div class="s-card-body">Small ResNets feasible with GPU. Prove an image passed a classifier without revealing the image. Content authentication.</div>
+    </div>
+    <div class="s-card">
+      <div class="s-card-tag">Research</div>
+      <div class="s-card-title">Transformer attention</div>
+      <div class="s-card-body">Single attention heads provable with approximations. 2–10 min GPU proving per head. Softmax and LayerNorm need tricks.</div>
+    </div>
+    <div class="s-card">
+      <div class="s-card-tag">For agents</div>
+      <div class="s-card-title">Decision attestation</div>
+      <div class="s-card-body">Prove a small policy / reward model output. An agent attests its action was valid without revealing its full state.</div>
+    </div>
+    <div class="s-card">
+      <div class="s-card-tag">For LAP / AiM</div>
+      <div class="s-card-title">Identity hash proofs</div>
+      <div class="s-card-body">Merkle inclusion proofs on a committed LAP document. Prove identity consistency across sessions in &lt;1s. No zkML needed.</div>
+    </div>
+  </div>
+</article>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- ARTICLE 03 — AGENT TECHNICAL STACK         -->
+<!-- ═══════════════════════════════════════════ -->
+<article class="article" id="agent-stack">
+  <header class="article-header">
+    <div class="article-tag">Article 03 — Agentic Infrastructure</div>
+    <h2 class="article-title">The Technical Stack<br>for <em>Autonomous Agents</em></h2>
+    <p class="article-deck">Autonomous agents can't just generate output. They have to transact — finding counterparties, making commitments, moving money, and operating inside market rules. This is the missing infrastructure layer. Three planes. Ten layers. Most of it not yet built.</p>
+    <div class="article-byline"><a href="https://x.com/awrigh01/status/2056841869594918918?s=20" target="_blank" rel="noopener noreferrer">Aaron Wright</a> — May 19, 2026 · 69.5K views</div>
+  </header>
+
+  <div class="callout">
+    <div class="callout-label">The core argument</div>
+    <div class="callout-title">Markets don't run on intelligence. They run on identity, trust, pricing, contracts, settlement, enforcement, and policy.</div>
+    <p class="callout-body">Strip those away and you don't have an economy. You have a demo. The question underneath agentic capital markets isn't who funds an agent — it's what allows one software actor to reliably transact with another. Whoever assembles the full stack first will not just build a useful product. They will own the <strong>transaction rails of machine labour</strong>.</p>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-cell">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Planes<br>(trust / market / control)</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">10</div>
+      <div class="stat-label">Layers<br>each a distinct product</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">128K</div>
+      <div class="stat-label">Agents registered on<br>ERC-8004 across 24 chains</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">€35M</div>
+      <div class="stat-label">EU AI Act penalty cap<br>in force Aug 2, 2026</div>
+    </div>
+  </div>
+
+  <!-- PLANE 1: TRUST -->
+  <div class="rule"><span>Plane 01 — Trust</span></div>
+
+  <div class="plane-header">
+    <div class="plane-icon">Trust plane</div>
+    <div>
+      <div class="plane-name">Who the agent is, how it's found, what it has done</div>
+      <p class="plane-desc">Three layers that must exist before any market can clear at all.</p>
+    </div>
+  </div>
+
+  <div class="layer-list">
+    <div class="layer-item">
+      <div class="layer-num">L1</div>
+      <div class="layer-content">
+        <div class="layer-sub">Identity — Know-Your-Agent</div>
+        <div class="layer-name">Who is on the other side of the trade?</div>
+        <div class="layer-body">Current state: identifiers without identity. An agent introduces itself as <code>gpt-4.1-claims-processor-v3</code> and you have no way to verify the weights match, the system prompt is what it claims, or the tools it advertises are accurate. <strong>ERC-8004</strong> (August 2025, co-authored by MetaMask, Google, Coinbase, Ethereum Foundation) defines an Identity Registry as an ERC-721 NFT — each agent owns a token resolving to a JSON file naming its A2A endpoint, MCP endpoint, ENS handle, and wallet addresses. The soft underbelly: operators self-attest. Apple-style signing by inference providers doesn't exist yet.</div>
+        <div class="layer-vendors">
+          <span class="vendor-chip">ERC-8004</span>
+          <span class="vendor-chip">Cheqd</span>
+          <span class="vendor-chip">Sphereon</span>
+          <span class="vendor-chip">AgentProof</span>
+        </div>
+      </div>
+    </div>
+    <div class="layer-item">
+      <div class="layer-num">L2</div>
+      <div class="layer-content">
+        <div class="layer-sub">Discovery &amp; Capability Registry</div>
+        <div class="layer-name">How do you find the right agent?</div>
+        <div class="layer-body">Today: a flat list on a webpage with no machine-readable capability surface. An agent looking for "OCR under 200ms p95 with HIPAA controls" cannot ask that question to any existing registry and get a structured answer. MCP and A2A are the interop standards; ERC-8004's registration file is the closest thing to a structured capability declaration — each agent publishes its name, endpoints, trust models, and arbitrary metadata. The search engine layer on top <strong>does not yet exist as a category-defining product</strong>.</div>
+        <div class="layer-vendors">
+          <span class="vendor-chip">MCP (Anthropic)</span>
+          <span class="vendor-chip">A2A (Google)</span>
+          <span class="vendor-chip">ERC-8004</span>
+        </div>
+      </div>
+    </div>
+    <div class="layer-item">
+      <div class="layer-num">L3</div>
+      <div class="layer-content">
+        <div class="layer-sub">Reputation</div>
+        <div class="layer-name">What has this agent actually done?</div>
+        <div class="layer-body">Agent work isn't commoditised — outputs vary, agents drift, models get deprecated. Reputation is load-bearing. Needs: cryptographically attested job histories, cross-marketplace portability (no marketplace currently lets reputation out — it's their moat), and sybil resistance. ERC-8004's Reputation Registry is the most concrete attempt: stores raw feedback on-chain, scoring happens off-chain. <strong>"Moody's for Machines"</strong> — a rating agency that turns raw feedback into investment-grade scores — has not been built and is one of the most valuable openings in the stack.</div>
+        <div class="layer-vendors">
+          <span class="vendor-chip">ERC-8004 Reputation</span>
+          <span class="vendor-chip">EAS attestations</span>
+          <span class="vendor-chip">Gitcoin Passport</span>
+          <span class="vendor-chip">AgentProof</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLANE 2: MARKET -->
+  <div class="rule"><span>Plane 02 — Market</span></div>
+
+  <div class="plane-header">
+    <div class="plane-icon">Market plane</div>
+    <div>
+      <div class="plane-name">How value clears between agents</div>
+      <p class="plane-desc">Four layers for price discovery, obligation encoding, money movement, and dispute resolution.</p>
+    </div>
+  </div>
+
+  <div class="layer-list">
+    <div class="layer-item">
+      <div class="layer-num">L4</div>
+      <div class="layer-content">
+        <div class="layer-sub">Quoting &amp; Price Discovery</div>
+        <div class="layer-name">The layer that doesn't exist — and is the most economically interesting</div>
+        <div class="layer-body">Agent services don't fit hourly, fixed-scope, or outcome pricing cleanly. The interesting price isn't "per token" but "per result of acceptable quality." Needs real-time RFQ (buyer agent broadcasts job spec, providers respond in 100ms — Tradeweb for cognitive work) and outcome contracts with verifiable completion. The closest blueprint is programmatic ad exchanges. The companies building this are mostly stealth. <strong>The opening is large.</strong></div>
+        <div class="layer-vendors">
+          <span class="vendor-chip">Largely unbuilt</span>
+          <span class="vendor-chip">AgentOps (adjacent)</span>
+        </div>
+      </div>
+    </div>
+    <div class="layer-item">
+      <div class="layer-num">L5</div>
+      <div class="layer-content">
+        <div class="layer-sub">Contracting</div>
+        <div class="layer-name">What exactly was the money supposed to buy?</div>
+        <div class="layer-body">Today: a prompt, an API call, a payment auth, and an assumption both sides mean the same thing. Enough for a demo; not for a market. Needs machine-readable MSAs (EIP-712 typed data is the right cryptographic primitive), encoded SLAs with signed eval prompts, proof of authority from the governance layer, and termination conditions enforceable without either side's cooperation. A real contracting layer looks less like a PDF and more like a hybrid object: part legal agreement, part workflow schema, part policy bundle.</div>
+        <div class="layer-vendors">
+          <span class="vendor-chip">EIP-712</span>
+          <span class="vendor-chip">Largely unbuilt</span>
+        </div>
+      </div>
+    </div>
+    <div class="layer-item">
+      <div class="layer-num">L6</div>
+      <div class="layer-content">
+        <div class="layer-sub">Settlement</div>
+        <div class="layer-name">Money moves on agent timescales, not Net-30</div>
+        <div class="layer-body">Three rails compete: stablecoin (sub-second, programmable, jurisdictionally unsettled), agent-issued cards (Visa Intelligent Commerce, Mastercard Agent Pay, Stripe Issuing — bank rails with chargebacks, jurisdictionally clean), and ACH (cheap, slow, fine for weekly cycles). The right architecture is layered. <strong>Whoever builds the abstraction layer — <code>pay(amount, currency, counterparty, settlement_window)</code> and the system picks the cheapest rail — wins the developer surface.</strong></div>
+        <div class="layer-vendors">
+          <span class="vendor-chip">Coinbase x402</span>
+          <span class="vendor-chip">Stripe Bridge</span>
+          <span class="vendor-chip">Visa Intelligent Commerce</span>
+          <span class="vendor-chip">Circle CCTP</span>
+        </div>
+      </div>
+    </div>
+    <div class="layer-item">
+      <div class="layer-num">L7</div>
+      <div class="layer-content">
+        <div class="layer-sub">Dispute Resolution</div>
+        <div class="layer-name">When an agent doesn't deliver, who decides?</div>
+        <div class="layer-body">Today: "the human operator emails the other operator." Doesn't scale to a million agentic LLCs. Needs escrow as default (held until SLA conditions met), automated remediation (quality below threshold → automatic refund), and third-party validators. ERC-8004's Validation Registry is the standardised hook — intentionally unopinionated about how validation happens: zkML proofs, TEE attestations, stake-secured re-execution, or human judges. The arbiter is itself a marketplace participant with its own reputation.</div>
+        <div class="layer-vendors">
+          <span class="vendor-chip">ERC-8004 Validation</span>
+          <span class="vendor-chip">Kleros (adjacent)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLANE 3: CONTROL -->
+  <div class="rule"><span>Plane 03 — Control</span></div>
+
+  <div class="plane-header">
+    <div class="plane-icon">Control plane</div>
+    <div>
+      <div class="plane-name">What the agent is allowed to do — and what must be proved</div>
+      <p class="plane-desc">Three layers for governance, compliance, and runtime coordination. The fastest-moving part of the stack right now.</p>
+    </div>
+  </div>
+
+  <div class="layer-list">
+    <div class="layer-item">
+      <div class="layer-num">L8</div>
+      <div class="layer-content">
+        <div class="layer-sub">Governance</div>
+        <div class="layer-name">Spending limits, approval chains, kill switches, proof of authority</div>
+        <div class="layer-body">The most concrete primitives came from crypto first: Safe allowance modules, ERC-4337 session keys with scoped time-bounded permissions, hierarchical multisig with timelocks. The enterprise version: Cordum, Galileo, Microsoft's Agent Governance Toolkit — SOC 2-friendly, IAM-integrated. The deepest unsolved piece: <strong>authorized scope</strong> — a machine-readable, signed declaration of what the agent is allowed to bind its principal to. Without it, every agent-signed contract is one ultra vires claim away from worthless. Gartner predicts 40%+ of agentic AI projects will be cancelled by end of 2027 specifically because organisations cannot govern them.</div>
+        <div class="layer-vendors">
+          <span class="vendor-chip">Cordum</span>
+          <span class="vendor-chip">Galileo</span>
+          <span class="vendor-chip">Aegis AI</span>
+          <span class="vendor-chip">Safe modules</span>
+          <span class="vendor-chip">ERC-4337</span>
+          <span class="vendor-chip">MS Agent Governance</span>
+        </div>
+      </div>
+    </div>
+    <div class="layer-item">
+      <div class="layer-num">L9</div>
+      <div class="layer-content">
+        <div class="layer-sub">Compliance</div>
+        <div class="layer-name">What must be proved to a regulator, after the fact?</div>
+        <div class="layer-body">Governance asks: what is the org willing to let the agent do? Compliance asks: what is the org required to prove about what the agent did? Different buyer (general counsel vs CISO), different SLA (real-time enforcement vs evidentiary completeness), different failure mode (bad outcome vs regulatory fine). The EU AI Act's high-risk obligations take effect <strong>August 2, 2026</strong> with Article 99 penalties up to €35M or 7% of global turnover. Audit-grade logging (Articles 12 & 19) is similar in shape to SOX requirements — the same kind of GRC vendor stack is likely to emerge.</div>
+        <div class="layer-vendors">
+          <span class="vendor-chip">ComplyEdge</span>
+          <span class="vendor-chip">Lucairn</span>
+          <span class="vendor-chip">Agent Module</span>
+          <span class="vendor-chip">AgentWorks</span>
+        </div>
+      </div>
+    </div>
+    <div class="layer-item">
+      <div class="layer-num">L10</div>
+      <div class="layer-content">
+        <div class="layer-sub">Orchestration &amp; Runtime</div>
+        <div class="layer-name">Where agents run, remember, get watched, and hand work to each other</div>
+        <div class="layer-body">Four distinct concerns that were wrongly conflated: <strong>Runtime</strong> (Modal, E2B, Daytona — differentiating on price and cold-start), <strong>Memory</strong> (Mem0, Letta/MemGPT, Zep — not yet portable across runtimes), <strong>Observability</strong> (Langfuse, Arize, Braintrust — the audit trail backing reputation, compliance, and disputes), and <strong>Orchestration</strong> (LangGraph, CrewAI, AutoGen, Anthropic Skills — where multi-agent state, handoffs, parallelism, and failure recovery get encoded). 59% of enterprises in 2026 run three or more LLMs that need to coordinate. <strong>OpenTelemetry-for-agents is the missing standard</strong> — the marketplace doesn't have to build the runtime, but it must standardise the export format.</div>
+        <div class="layer-vendors">
+          <span class="vendor-chip">LangGraph</span>
+          <span class="vendor-chip">CrewAI</span>
+          <span class="vendor-chip">AutoGen</span>
+          <span class="vendor-chip">Mem0</span>
+          <span class="vendor-chip">Langfuse</span>
+          <span class="vendor-chip">Modal</span>
+          <span class="vendor-chip">E2B</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rule"><span>Strategic read</span></div>
+
+  <div class="callout" style="margin-bottom: 1rem;">
+    <div class="callout-label">The platform claim</div>
+    <div class="callout-title">Whoever owns identity, settlement, and governance owns the marketplace.</div>
+    <p class="callout-body">The ten layers compose. Identity unlocks reputation. Reputation unlocks pricing. Pricing unlocks contracting. Contracting unlocks settlement. Settlement plus governance unlocks enforceable disputes. <strong>Layer 4 (quoting) is the most undervalued</strong> — settlement gets the press, identity gets the standards work, governance has a wave of funded startups, observability has fifteen. Real-time machine-to-machine price discovery is a TAM measured in low-trillions of dollars of cognitive labour reallocating to software, and almost nobody is building it as a primary product.</p>
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">What the winning company looks like</div>
+    <div class="callout-title">Not a model lab. A market operator.</div>
+    <p class="callout-body">Part exchange, part payments network, part identity provider, part trust infrastructure, part governance platform. Less like OpenAI and more like <strong>Visa, Moody's, Stripe, Nasdaq, and ServiceNow fused into a single system for software actors</strong>. That company does not exist yet. But the constraints around it are now visible, and the standards substrate — led by ERC-8004 — is starting to take shape underneath them.</p>
+  </div>
+</article>
+
+<!-- COLOPHON -->
+<footer class="colophon">
+  <div class="colophon-left">
+    Ground Truth — Folio<br>
+    Vol. 03 / Cryptography × zkML × Agentic Infrastructure<br>
+    May 2026
+  </div>
+  <div class="colophon-right">
+    Three articles<br>
+    ZK-SNARKs · ezkl · Agent Stack<br>
+    <a href="https://x.com/awrigh01/status/2056841869594918918?s=20" target="_blank" rel="noopener noreferrer">Aaron Wright</a> (Article 03)
+  </div>
+</footer>
+
+</body>
+</html>
