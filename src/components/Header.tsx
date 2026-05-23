@@ -8,7 +8,7 @@ export default function Header() {
       <Link href="/" className="flex items-center gap-3 group">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/tensor-design.svg"
+          src="/sky-tensor.png"
           alt="Tensor"
           width={36}
           height={36}
