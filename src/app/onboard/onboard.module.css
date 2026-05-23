@@ -1,0 +1,357 @@
+.stage {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #09090b;
+  color: #e4e4e7;
+  font-family: -apple-system, "SF Pro Display", system-ui, sans-serif;
+  overflow: hidden;
+}
+
+.stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, #18181b 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.5;
+}
+
+.stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.4) 100%);
+}
+
+.mark {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  border: 1.5px solid #27272a;
+  border-radius: 28px;
+  background: #0a0a0b;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+  opacity: 0;
+  transform: scale(0.9);
+  overflow: hidden;
+  transition:
+    width 0.9s cubic-bezier(0.65, 0.05, 0.36, 1),
+    height 0.9s cubic-bezier(0.65, 0.05, 0.36, 1),
+    border-radius 0.9s cubic-bezier(0.65, 0.05, 0.36, 1),
+    transform 0.9s cubic-bezier(0.65, 0.05, 0.36, 1),
+    left 0.9s cubic-bezier(0.65, 0.05, 0.36, 1),
+    top 0.9s cubic-bezier(0.65, 0.05, 0.36, 1);
+}
+
+.stageMaterialize {
+  animation: materialize 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes materialize {
+  0% { opacity: 0; transform: scale(0.4); }
+  60% { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1.0); }
+}
+
+.stageCentered {
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) scale(1) !important;
+}
+
+.stageCard {
+  width: 440px;
+  height: 500px;
+  border-radius: 18px;
+  border-color: #3f3f46;
+}
+
+.markTop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition:
+    padding 0.9s cubic-bezier(0.65, 0.05, 0.36, 1),
+    width 0.9s cubic-bezier(0.65, 0.05, 0.36, 1),
+    border-bottom-color 0.9s ease;
+  padding: 24px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.logoRing {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 1px solid rgba(245, 158, 11, 0);
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0);
+  transition: border-color 0.4s ease, box-shadow 0.4s ease, opacity 0.4s ease;
+  opacity: 0;
+}
+
+.stageDrawing .logoRing {
+  opacity: 1;
+  border-color: rgba(245, 158, 11, 0.5);
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.1), 0 0 30px rgba(245, 158, 11, 0.15);
+  animation: ring-spin 8s linear infinite;
+}
+
+@keyframes ring-spin {
+  to { transform: rotate(360deg); }
+}
+
+.stageCard .logoRing {
+  opacity: 0;
+}
+
+.logoImg {
+  width: 200px;
+  height: 200px;
+  display: block;
+  filter: invert(1) drop-shadow(0 0 8px rgba(245, 158, 11, 0.08));
+  -webkit-mask-image: linear-gradient(100deg, black 0%, black 44%, rgba(0, 0, 0, 0.6) 50%, transparent 56%, transparent 100%);
+  mask-image: linear-gradient(100deg, black 0%, black 44%, rgba(0, 0, 0, 0.6) 50%, transparent 56%, transparent 100%);
+  -webkit-mask-size: 260% 100%;
+  mask-size: 260% 100%;
+  -webkit-mask-position: 100% 0;
+  mask-position: 100% 0;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  transition-property: width, height, filter, mask-position, -webkit-mask-position;
+  transition-duration: 0.9s, 0.9s, 0.9s, 1.2s, 1.2s;
+  transition-timing-function:
+    cubic-bezier(0.65, 0.05, 0.36, 1),
+    cubic-bezier(0.65, 0.05, 0.36, 1),
+    ease,
+    cubic-bezier(0.45, 0, 0.25, 1),
+    cubic-bezier(0.45, 0, 0.25, 1);
+}
+
+.stageDrawing .logoImg {
+  -webkit-mask-position: 0% 0;
+  mask-position: 0% 0;
+}
+
+.scanBeam {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent 0%, #f59e0b 40%, #fbbf24 50%, #f59e0b 60%, transparent 100%);
+  box-shadow: 0 0 14px 2px rgba(245, 158, 11, 0.5);
+  left: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stageDrawing .scanBeam {
+  animation: beam-sweep 1.2s cubic-bezier(0.45, 0, 0.25, 1) forwards;
+}
+
+@keyframes beam-sweep {
+  0% { left: 12%; opacity: 0; }
+  10% { opacity: 0.9; }
+  85% { opacity: 0.9; }
+  100% { left: 88%; opacity: 0; }
+}
+
+.subtitle {
+  opacity: 0;
+  margin-top: 14px;
+  font-size: 10px;
+  font-family: monospace;
+  letter-spacing: 0.3em;
+  color: #71717a;
+  text-transform: uppercase;
+  transition: opacity 0.5s ease 0.3s;
+}
+
+.stageText .subtitle {
+  opacity: 1;
+}
+
+.stageCard .subtitle {
+  display: none;
+}
+
+.stageCard .markTop {
+  flex-direction: row;
+  justify-content: flex-start;
+  padding: 14px 20px;
+  border-bottom: 1px solid #27272a;
+  width: 100%;
+}
+
+.stageCard .logoImg {
+  width: 38px;
+  height: 38px;
+  filter: invert(1);
+}
+
+.cardHeaderLabel,
+.cardHeaderSub {
+  opacity: 0;
+  transition: opacity 0.4s ease 0.45s;
+  font-family: monospace;
+  text-transform: uppercase;
+}
+
+.cardHeaderWrap {
+  display: none;
+  flex-direction: column;
+}
+
+.stageCard .cardHeaderWrap {
+  display: flex;
+}
+
+.stageCard .cardHeaderLabel {
+  opacity: 1;
+  margin-left: 12px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.32em;
+  color: #e4e4e7;
+}
+
+.stageCard .cardHeaderSub {
+  opacity: 1;
+  font-size: 8.5px;
+  letter-spacing: 0.2em;
+  color: #71717a;
+  margin-top: 2px;
+}
+
+.cardBody {
+  opacity: 0;
+  width: 100%;
+  padding: 22px 24px 22px;
+}
+
+.stageCard .cardBody {
+  opacity: 1;
+  transition: opacity 0.4s ease 0.5s;
+}
+
+.stageCard .cardBody > * {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: field-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.stageCard .cardBody > *:nth-child(1) { animation-delay: 0.55s; }
+.stageCard .cardBody > *:nth-child(2) { animation-delay: 0.65s; }
+.stageCard .cardBody > *:nth-child(3) { animation-delay: 0.75s; }
+.stageCard .cardBody > *:nth-child(4) { animation-delay: 0.85s; }
+.stageCard .cardBody > *:nth-child(5) { animation-delay: 0.95s; }
+.stageCard .cardBody > *:nth-child(6) { animation-delay: 1.05s; }
+
+@keyframes field-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fieldLabel {
+  display: block;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  color: #71717a;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.fieldInput {
+  width: 100%;
+  background: #111114;
+  border: 1px solid #27272a;
+  color: #e4e4e7;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: monospace;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.fieldInput:focus {
+  border-color: #f59e0b;
+}
+
+.fieldRow {
+  margin-bottom: 12px;
+}
+
+.advancedToggle {
+  font-size: 10px;
+  font-family: monospace;
+  color: #71717a;
+  cursor: pointer;
+  user-select: none;
+  margin: 6px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.advancedToggle:hover {
+  color: #a1a1aa;
+}
+
+.advancedChevron {
+  width: 8px;
+  height: 8px;
+  transition: transform 0.2s ease;
+}
+
+.advancedChevronOpen {
+  transform: rotate(90deg);
+}
+
+.advancedFields {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+
+.advancedFieldsOpen {
+  max-height: 240px;
+}
+
+.continueBtn {
+  width: 100%;
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+  color: #09090b;
+  padding: 11px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 900;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.continueBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.25);
+}
+
+.continueBtn:active {
+  transform: translateY(0);
+}
+
+.errorBorder {
+  border-color: #ef4444 !important;
+}
