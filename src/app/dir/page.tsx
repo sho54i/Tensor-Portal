@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Link from "next/link";
-import { getLatestDirReport } from "@/lib/drive";
+import { getDirReport } from "@/lib/drive";
 
 export const metadata = {
   title: "DIR — Daily Intelligence Report",
@@ -53,8 +53,13 @@ function themeReport(html: string): string {
   return REPORT_THEME_CSS + html;
 }
 
-export default async function DirPage() {
-  const result = await getLatestDirReport();
+export default async function DirPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ file?: string }>;
+}) {
+  const { file } = await searchParams;
+  const result = await getDirReport(file);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -85,12 +90,24 @@ export default async function DirPage() {
             <section className="mb-4">
               <div className="flex items-center justify-between border-b border-[#1f1f1f] pb-4">
                 <div>
-                  <h3 className="operator-text text-xs text-[#666] mb-1">Latest Edition</h3>
+                  <h3 className="operator-text text-xs text-[#666] mb-1">
+                    {result.isLatest ? "Latest Edition" : "Archived Edition"}
+                  </h3>
                   <p className="text-white text-sm font-mono">{result.data.file.name}</p>
                 </div>
-                <span className="text-[10px] text-[#444] font-mono">
-                  {formatTime(result.data.file.modifiedTime)}
-                </span>
+                <div className="flex items-center gap-4">
+                  {!result.isLatest && (
+                    <Link
+                      href="/dir"
+                      className="operator-text text-[10px] text-[#f59e0b] hover:text-[#fbbf24] transition-colors"
+                    >
+                      ↻ JUMP TO LATEST
+                    </Link>
+                  )}
+                  <span className="text-[10px] text-[#444] font-mono">
+                    {formatTime(result.data.file.modifiedTime)}
+                  </span>
+                </div>
               </div>
             </section>
 
@@ -113,17 +130,36 @@ export default async function DirPage() {
                   </span>
                 </div>
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  {result.siblings.map((f) => (
-                    <li
-                      key={f.id}
-                      className="operator-card p-4 flex items-center justify-between"
-                    >
-                      <span className="text-sm font-mono text-[#ddd]">{f.name}</span>
-                      <span className="text-[10px] text-[#444] font-mono">
-                        {formatTime(f.modifiedTime)}
-                      </span>
-                    </li>
-                  ))}
+                  {result.siblings.map((f) => {
+                    const isCurrent = f.id === result.data.file.id;
+                    const inner = (
+                      <>
+                        <span className="text-sm font-mono text-[#ddd] truncate">{f.name}</span>
+                        <span className="text-[10px] text-[#444] font-mono shrink-0 ml-4">
+                          {formatTime(f.modifiedTime)}
+                        </span>
+                      </>
+                    );
+                    return (
+                      <li key={f.id}>
+                        {isCurrent ? (
+                          <div className="operator-card p-4 flex items-center justify-between border-[#f59e0b]/40 bg-[#f59e0b]/[0.04]">
+                            <span className="text-sm font-mono text-white truncate">{f.name}</span>
+                            <span className="operator-text text-[9px] text-[#f59e0b] shrink-0 ml-4">
+                              NOW VIEWING
+                            </span>
+                          </div>
+                        ) : (
+                          <Link
+                            href={`/dir?file=${f.id}`}
+                            className="operator-card p-4 flex items-center justify-between hover:border-[#f59e0b]/40 hover:bg-white/[0.02] transition-colors"
+                          >
+                            {inner}
+                          </Link>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
               </section>
             )}
@@ -152,6 +188,21 @@ export default async function DirPage() {
                   The DIR folder is empty or the next run hasn&apos;t completed yet. Check back
                   after the next scheduled briefing.
                 </p>
+              </>
+            )}
+            {result.reason === "not_found" && (
+              <>
+                <h3 className="operator-text text-xs text-[#666] mb-4">Edition Not Found</h3>
+                <p className="text-[#888] text-sm mb-4">
+                  No edition with id <code className="text-white font-mono">{result.message}</code>{" "}
+                  in the archive. It may have been removed or the link is stale.
+                </p>
+                <Link
+                  href="/dir"
+                  className="operator-text text-[10px] text-[#f59e0b] hover:text-[#fbbf24] transition-colors"
+                >
+                  ↻ JUMP TO LATEST
+                </Link>
               </>
             )}
             {result.reason === "error" && (

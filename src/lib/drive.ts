@@ -50,10 +50,10 @@ async function downloadFile(fileId: string, apiKey: string): Promise<string> {
   return res.text();
 }
 
-export async function getLatestDirReport(): Promise<
-  | { ok: true; data: DirReport; siblings: DriveFile[] }
+export async function getDirReport(fileId?: string): Promise<
+  | { ok: true; data: DirReport; siblings: DriveFile[]; isLatest: boolean }
   | { ok: false; reason: "unconfigured"; missing: string[] }
-  | { ok: false; reason: "empty" | "error"; message?: string }
+  | { ok: false; reason: "empty" | "not_found" | "error"; message?: string }
 > {
   const env = requireEnv();
   if ("missing" in env) return { ok: false, reason: "unconfigured", missing: env.missing };
@@ -62,9 +62,17 @@ export async function getLatestDirReport(): Promise<
     const files = await listFolder(env.folderId, env.apiKey);
     const html = files.filter((f) => f.mimeType === "text/html" || f.name.endsWith(".html"));
     if (html.length === 0) return { ok: false, reason: "empty" };
-    const latest = html[0];
-    const content = await downloadFile(latest.id, env.apiKey);
-    return { ok: true, data: { file: latest, html: content }, siblings: html.slice(0, 10) };
+
+    const target = fileId ? html.find((f) => f.id === fileId) : html[0];
+    if (!target) return { ok: false, reason: "not_found", message: fileId };
+
+    const content = await downloadFile(target.id, env.apiKey);
+    return {
+      ok: true,
+      data: { file: target, html: content },
+      siblings: html,
+      isLatest: target.id === html[0].id,
+    };
   } catch (e) {
     return { ok: false, reason: "error", message: e instanceof Error ? e.message : String(e) };
   }
