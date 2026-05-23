@@ -15,6 +15,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Tensor — Operator Gateway",
   description: "Public portal and gateway to EntityOS and the AiM software stack.",
+  icons: {
+    icon: [{ url: "/entity_favicon.png", type: "image/png" }],
+    apple: [{ url: "/favicon-180.png", sizes: "180x180", type: "image/png" }],
+  },
 };
 
 export default function RootLayout({

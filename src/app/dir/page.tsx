@@ -15,6 +15,44 @@ function formatTime(iso: string): string {
   return d.toISOString().replace("T", " ").slice(0, 16) + " UTC";
 }
 
+const REPORT_THEME_CSS = `<style>
+  :root { color-scheme: dark; }
+  html, body {
+    background: #000 !important;
+    color: #ededed !important;
+    font-family: ui-sans-serif, -apple-system, system-ui, sans-serif !important;
+  }
+  h1, h2, h3, h4, h5, h6 { color: #fff !important; }
+  a { color: #f59e0b !important; text-decoration: none; }
+  a:hover { color: #fbbf24 !important; text-decoration: underline; }
+  code, pre {
+    background: #111 !important;
+    color: #e4e4e7 !important;
+    border: 1px solid #1f1f1f !important;
+    border-radius: 4px;
+    font-family: ui-monospace, "Geist Mono", monospace !important;
+  }
+  code { padding: 0.1em 0.35em; }
+  pre { padding: 12px; overflow-x: auto; }
+  pre code { background: transparent !important; border: 0 !important; padding: 0; }
+  table { border-collapse: collapse; }
+  th, td { border: 1px solid #1f1f1f !important; padding: 6px 10px; }
+  th { background: #0a0a0a !important; color: #fff !important; }
+  blockquote {
+    border-left: 3px solid #f59e0b !important;
+    padding-left: 12px;
+    color: #aaa !important;
+    margin-left: 0;
+  }
+  hr { border: 0; border-top: 1px solid #1f1f1f !important; }
+</style>`;
+
+function themeReport(html: string): string {
+  if (html.includes("</head>")) return html.replace("</head>", `${REPORT_THEME_CSS}</head>`);
+  if (html.includes("<body")) return html.replace(/<body([^>]*)>/, `<body$1>${REPORT_THEME_CSS}`);
+  return REPORT_THEME_CSS + html;
+}
+
 export default async function DirPage() {
   const result = await getLatestDirReport();
 
@@ -59,9 +97,9 @@ export default async function DirPage() {
             <section className="mb-12 operator-card overflow-hidden">
               <iframe
                 title={result.data.file.name}
-                srcDoc={result.data.html}
+                srcDoc={themeReport(result.data.html)}
                 sandbox="allow-same-origin"
-                className="w-full bg-white"
+                className="w-full bg-black"
                 style={{ height: "82vh", border: 0 }}
               />
             </section>
