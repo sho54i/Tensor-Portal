@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Memory Checking in IVC-based zkVMs — Tensor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#000000;
+  --panel:#0a0a0a;
+  --panel2:#111111;
+  --text:#ededed;
+  --muted:#888888;
+  --accent:#f59e0b;
+  --accent-hover:#fbbf24;
+  --line:#1f1f1f;
+  --line-strong:#333333;
+  --green:#89ffb0;
+  --orange:#ffb86b;
+  --purple:#b79cff;
+  --mono:'Geist Mono','DM Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{
+  box-sizing:border-box;
+}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,system-ui,sans-serif;
+  font-weight:300;
+  line-height:1.7;
+}
+.container{
+  width:min(1100px,92%);
+  margin:auto;
+  padding:48px 0 80px;
+}
+.hero{
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,#0a0a0a 0%, #000000 100%);
+  border-radius:20px;
+  padding:42px;
+  margin-bottom:28px;
+}
+.hero h1{
+  margin:14px 0 14px;
+  font-size:2.4rem;
+  font-weight:500;
+  letter-spacing:-0.03em;
+}
+.hero p{
+  color:var(--muted);
+  max-width:850px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+}
+.card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:28px;
+}
+.card h2{
+  margin-top:0;
+  font-size:1.3rem;
+  font-weight:500;
+  letter-spacing:-0.01em;
+}
+.card h3{
+  color:var(--accent);
+  margin-top:28px;
+  font-family:var(--mono);
+  font-size:.78rem;
+  font-weight:400;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+}
+p, li{
+  color:#cfd7df;
+}
+.small{
+  color:var(--muted);
+  font-size:.92rem;
+}
+.highlight{
+  color:var(--green);
+}
+.tag{
+  display:inline-block;
+  padding:5px 10px;
+  border:1px solid var(--line-strong);
+  border-radius:999px;
+  margin:4px 6px 4px 0;
+  color:var(--muted);
+  font-family:var(--mono);
+  font-size:.72rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  background:rgba(255,255,255,0.02);
+}
+.quote{
+  border-left:2px solid var(--accent);
+  padding-left:18px;
+  color:#b8c4d1;
+  margin:20px 0;
+  font-style:italic;
+}
+.flow{
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:18px;
+  margin-top:14px;
+  overflow:auto;
+  font-family:var(--mono);
+  font-size:.88rem;
+  color:#cfd7df;
+}
+code{
+  color:var(--orange);
+  font-family:var(--mono);
+}
+.footer{
+  margin-top:34px;
+  padding-top:18px;
+  border-top:1px solid var(--line);
+  color:var(--muted);
+  font-family:var(--mono);
+  font-size:.78rem;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+}
+ul{
+  padding-left:20px;
+}
+@media(max-width:900px){
+  .grid{
+    grid-template-columns:1fr;
+  }
+  .hero h1{
+    font-size:1.8rem;
+  }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <section class="hero">
+    <div class="tag">Zero Knowledge</div>
+    <div class="tag">zkVM</div>
+    <div class="tag">IVC</div>
+    <div class="tag">Memory Systems</div>
+    <div class="tag">AGI Infrastructure</div>
+
+    <h1>Memory Checking in IVC-based zkVMs</h1>
+
+    <p>
+      Summary and interpretation of Jens Groth&rsquo;s talk on zero-knowledge memory checking,
+      focused on how zkVMs maintain consistent memory across distributed proving systems &mdash;
+      and how those concepts may connect to future AGI memory architectures,
+      autonomous reasoning systems, and distributed cognition.
+    </p>
+
+    <p class="small">
+      Source transcript: <strong>&ldquo;Memory checking in IVC-based zkVMs&rdquo;</strong>
+    </p>
+  </section>
+
+  <div class="grid">
+
+    <section class="card">
+      <h2>1. Core Idea of the Talk</h2>
+
+      <p>
+        The talk explains a major problem in modern zero-knowledge virtual machines:
+      </p>
+
+      <div class="quote">
+        If computation is split across many proving steps or many machines,
+        how do you guarantee they all reference the same memory state?
+      </div>
+
+      <p>
+        In an IVC system (Incremental Verifiable Computation), execution is divided
+        into chunks. Each chunk may be proven independently.
+      </p>
+
+      <p>
+        This creates a dangerous failure mode:
+      </p>
+
+      <ul>
+        <li>Step A writes value X into memory</li>
+        <li>Step B later reads value Y from the same address</li>
+        <li>A malicious prover could fake consistency</li>
+      </ul>
+
+      <p>
+        Locally, every proof still looks valid.
+        Globally, the computation becomes corrupted.
+      </p>
+
+      <h3>The Main Problem</h3>
+
+      <p>
+        Local correctness is not enough.
+        The system also needs <span class="highlight">global memory consistency</span>.
+      </p>
+
+      <h3>Traditional Solution</h3>
+
+      <p>
+        Earlier zk systems used Merkle trees:
+      </p>
+
+      <ul>
+        <li>Memory is committed into a Merkle root</li>
+        <li>Each read/write operation includes Merkle proofs</li>
+        <li>The prover verifies every path</li>
+      </ul>
+
+      <p>
+        This works, but is expensive.
+        Hash computations dominate proving costs.
+      </p>
+
+      <h3>Groth&rsquo;s Direction</h3>
+
+      <p>
+        Instead of verifying full memory structures repeatedly,
+        the talk explores:
+      </p>
+
+      <div class="flow">
+        Read Set + Write Set<br><br>
+        &rarr; compress into multiset hashes<br><br>
+        &rarr; update tiny digests incrementally<br><br>
+        &rarr; verify consistency mathematically
+      </div>
+
+      <p>
+        This reduces proving overhead dramatically.
+      </p>
+
+    </section>
+
+    <section class="card">
+      <h2>2. What Multiset Hashing Does</h2>
+
+      <p>
+        Rather than storing full memory history,
+        the system tracks compressed summaries of:
+      </p>
+
+      <ul>
+        <li>All memory reads</li>
+        <li>All memory writes</li>
+      </ul>
+
+      <p>
+        If the final read-set hash equals the final write-set hash,
+        then memory stayed consistent across execution.
+      </p>
+
+      <h3>Why This Matters</h3>
+
+      <p>
+        The prover no longer carries massive memory snapshots.
+      </p>
+
+      <div class="flow">
+        Traditional:
+        <br><br>
+        Full memory state &rarr; repeated validation
+        <br><br>
+        New approach:
+        <br><br>
+        Tiny evolving digest &rarr; mathematical consistency proof
+      </div>
+
+      <h3>Key Optimization</h3>
+
+      <p>
+        Groth explores removing expensive cryptographic hashing entirely
+        for some memory contexts.
+      </p>
+
+      <p>
+        Instead:
+      </p>
+
+      <ul>
+        <li>Use deterministic injective mappings</li>
+        <li>Map memory elements directly into elliptic-curve points</li>
+        <li>Avoid heavy cryptographic constraints</li>
+      </ul>
+
+      <p>
+        This is important because zk proving cost is heavily dominated by:
+      </p>
+
+      <ul>
+        <li>hash functions</li>
+        <li>constraint counts</li>
+        <li>memory verification</li>
+      </ul>
+
+      <p>
+        The proposal attempts to reduce all three.
+      </p>
+
+      <h3>High-Level Outcome</h3>
+
+      <div class="quote">
+        Instead of proving entire memory correctness repeatedly,
+        prove that memory transitions preserve a consistent global structure.
+      </div>
+
+    </section>
+
+  </div>
+
+  <section class="card" style="margin-top:24px;">
+    <h2>3. AGI / Autonomous Systems Interpretation</h2>
+
+    <p>
+      This talk is actually highly relevant to AGI infrastructure,
+      especially for systems involving:
+    </p>
+
+    <div>
+      <span class="tag">Long-term memory</span>
+      <span class="tag">Distributed cognition</span>
+      <span class="tag">Agent swarms</span>
+      <span class="tag">World models</span>
+      <span class="tag">Scene graphs</span>
+      <span class="tag">USD pipelines</span>
+      <span class="tag">Persistent planning</span>
+    </div>
+
+    <h3>AGI Memory Problem</h3>
+
+    <p>
+      Future AGI systems likely cannot keep all cognition inside a single model context.
+    </p>
+
+    <p>
+      Instead:
+    </p>
+
+    <ul>
+      <li>Memory becomes externalized</li>
+      <li>Different subsystems process different slices</li>
+      <li>Many agents update shared world-state</li>
+      <li>Planning unfolds incrementally over time</li>
+    </ul>
+
+    <p>
+      This is structurally similar to IVC zkVM computation.
+    </p>
+
+    <div class="flow">
+      AGI Node A
+      &rarr; modifies memory
+      &rarr; emits digest
+
+      <br><br>
+
+      AGI Node B
+      &rarr; continues reasoning later
+      &rarr; verifies consistency
+    </div>
+
+    <h3>Connection to Cognitive Integrity</h3>
+
+    <p>
+      Multiset hashing resembles a lightweight cognitive integrity layer.
+    </p>
+
+    <p>
+      Rather than storing every detail permanently,
+      an AGI could maintain:
+    </p>
+
+    <ul>
+      <li>compressed memory commitments</li>
+      <li>reasoning digests</li>
+      <li>semantic transition proofs</li>
+      <li>state lineage tracking</li>
+    </ul>
+
+    <h3>Potential AGI Uses</h3>
+
+    <ul>
+      <li>
+        <strong>Persistent identity:</strong>
+        prove an agent evolved from earlier states without tampering
+      </li>
+
+      <li>
+        <strong>Multi-agent coordination:</strong>
+        agents share verifiable world-state updates
+      </li>
+
+      <li>
+        <strong>Memory auditing:</strong>
+        detect hallucinated or inconsistent memories
+      </li>
+
+      <li>
+        <strong>Distributed planning:</strong>
+        independently computed plans remain globally coherent
+      </li>
+
+      <li>
+        <strong>Scene understanding:</strong>
+        maintain consistent USD/world representations over time
+      </li>
+    </ul>
+
+  </section>
+
+  <section class="card" style="margin-top:24px;">
+    <h2>4. Why This May Matter for Your Stack</h2>
+
+    <p>
+      Based on your earlier goals:
+    </p>
+
+    <ul>
+      <li>USD scene understanding</li>
+      <li>autonomous planning</li>
+      <li>agent orchestration</li>
+      <li>semantic scene edits</li>
+      <li>memory-heavy world models</li>
+    </ul>
+
+    <p>
+      This zkVM memory model maps surprisingly well onto future AI architecture.
+    </p>
+
+    <h3>Interesting Parallel</h3>
+
+    <div class="flow">
+      zkVM:
+      <br>
+      CPU state + externalized memory
+      <br><br>
+
+      AGI:
+      <br>
+      active reasoning + external semantic memory
+    </div>
+
+    <p>
+      Both systems:
+    </p>
+
+    <ul>
+      <li>cannot afford full-state recomputation constantly</li>
+      <li>need incremental consistency</li>
+      <li>must survive distributed execution</li>
+      <li>need compressed representations</li>
+    </ul>
+
+    <h3>Potential Long-Term Direction</h3>
+
+    <p>
+      A future autonomous system could use:
+    </p>
+
+    <ul>
+      <li>semantic memory graphs</li>
+      <li>digest-based state tracking</li>
+      <li>world-state commitments</li>
+      <li>incremental verification layers</li>
+    </ul>
+
+    <p>
+      Not necessarily for blockchain purposes,
+      but for:
+    </p>
+
+    <ul>
+      <li>robustness</li>
+      <li>traceability</li>
+      <li>multi-agent synchronization</li>
+      <li>memory integrity</li>
+    </ul>
+
+    <h3>Most Important Insight</h3>
+
+    <div class="quote">
+      The talk reframes &ldquo;memory&rdquo; not as stored data,
+      but as a continuously verifiable transition structure.
+    </div>
+
+    <p>
+      That concept becomes increasingly important as AI systems move from:
+    </p>
+
+    <div class="flow">
+      single-pass inference
+      <br><br>
+      &rarr; toward persistent autonomous cognition
+    </div>
+
+  </section>
+
+  <section class="footer">
+    Transcript reference &middot; &ldquo;Memory checking in IVC-based zkVMs &mdash; Jens Groth&rdquo;
+  </section>
+
+</div>
+</body>
+</html>
