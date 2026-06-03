@@ -24,6 +24,9 @@ export default function Header() {
         <Link href="/dir" className="operator-text text-xs text-[#666] hover:text-white transition-colors hidden md:block">
           DIR
         </Link>
+        <Link href="/tir" className="operator-text text-xs text-[#666] hover:text-white transition-colors hidden md:block">
+          TIR
+        </Link>
         <div className="hidden md:flex items-center gap-2 text-[#666] operator-text text-xs">
           <div className="w-2 h-2 rounded-full bg-[#50e3c2] animate-pulse"></div>
           ALL SYSTEMS OPERATIONAL

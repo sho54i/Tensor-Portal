@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>x402 — Agentic Payments Protocol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  /* Space Grey Foundation */
+  --bg-void:       #0c0d0f;
+  --bg-base:       #111318;
+  --bg-surface:    #171b22;
+  --bg-raised:     #1e2330;
+  --bg-hover:      #242a38;
+  --border-dim:    #252c3a;
+  --border-mid:    #2e3748;
+  --border-hi:     #3d4a62;
+
+  /* Entity Eve Accent Palette */
+  --teal:          #00c9b1;
+  --teal-dim:      #009e8c;
+  --teal-glow:     rgba(0,201,177,0.12);
+  --cyan:          #00d9f5;
+  --cyan-dim:      #00aac4;
+  --cyan-glow:     rgba(0,217,245,0.10);
+  --purple:        #a259ff;
+  --purple-dim:    #7c3dcb;
+  --purple-glow:   rgba(162,89,255,0.12);
+  --violet:        #6e3fff;
+
+  /* Text */
+  --text-primary:  #e8ecf4;
+  --text-secondary:#8b96ac;
+  --text-muted:    #505a6e;
+  --text-accent:   #00c9b1;
+
+  /* Fonts */
+  --font-display:  'Syne', sans-serif;
+  --font-mono:     'IBM Plex Mono', monospace;
+  --font-body:     'Space Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.7;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── GRID NOISE OVERLAY ─────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,201,177,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,201,177,0.015) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── COVER ─────────────────────────────────────── */
+.cover {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 60px 40px;
+  overflow: hidden;
+}
+
+.cover-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  pointer-events: none;
+}
+.orb-teal {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(0,201,177,0.18) 0%, transparent 70%);
+  top: -100px; left: -100px;
+  animation: pulse 8s ease-in-out infinite;
+}
+.orb-purple {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(162,89,255,0.14) 0%, transparent 70%);
+  bottom: -80px; right: -80px;
+  animation: pulse 10s ease-in-out infinite reverse;
+}
+.orb-cyan {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(0,217,245,0.10) 0%, transparent 70%);
+  top: 40%; left: 60%;
+  animation: pulse 6s ease-in-out infinite 2s;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+.cover-inner {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 900px;
+}
+
+.cover-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.2s;
+}
+
+.cover-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--teal-dim);
+  background: var(--teal-glow);
+  padding: 6px 16px;
+  border-radius: 2px;
+  margin-bottom: 40px;
+}
+
+.cover-tag::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--teal);
+  border-radius: 50%;
+  animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+.cover-title {
+  font-family: var(--font-display);
+  font-size: clamp(64px, 12vw, 120px);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  margin-bottom: 12px;
+  opacity: 0;
+  animation: fadeUp 1s ease forwards 0.4s;
+}
+
+.title-main {
+  display: block;
+  background: linear-gradient(135deg, var(--text-primary) 40%, var(--teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.title-sub {
+  display: block;
+  font-size: clamp(16px, 3vw, 28px);
+  font-weight: 400;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+  -webkit-text-fill-color: var(--text-secondary);
+  margin-top: 16px;
+  font-family: var(--font-mono);
+}
+
+.cover-meta {
+  margin-top: 48px;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeUp 1s ease forwards 0.8s;
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.meta-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.meta-val {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--cyan);
+}
+
+.cover-divider {
+  width: 1px;
+  height: 40px;
+  background: var(--border-mid);
+  align-self: center;
+}
+
+.scroll-hint {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  animation: fadeIn 1s ease forwards 1.4s;
+}
+
+.scroll-hint span {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.scroll-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--teal), transparent);
+  animation: scrollDown 2s ease-in-out infinite;
+}
+
+@keyframes scrollDown {
+  0% { transform: scaleY(0); transform-origin: top; }
+  50% { transform: scaleY(1); transform-origin: top; }
+  51% { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ─── LAYOUT ─────────────────────────────────────── */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 40px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── SECTION HEADER ─────────────────────────────── */
+.section {
+  padding: 80px 0 60px;
+  border-top: 1px solid var(--border-dim);
+}
+
+.section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.section-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--teal);
+  letter-spacing: 0.1em;
+  padding-top: 6px;
+  min-width: 32px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--text-primary);
+}
+
+.section-title em {
+  font-style: normal;
+  color: var(--teal);
+}
+
+.section-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 10px;
+  line-height: 1.8;
+  max-width: 680px;
+}
+
+/* ─── CALLOUT CARD ───────────────────────────────── */
+.callout {
+  border: 1px solid var(--border-mid);
+  background: var(--bg-surface);
+  padding: 28px 32px;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+
+.callout::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+}
+
+.callout.teal::before { background: var(--teal); }
+.callout.cyan::before { background: var(--cyan); }
+.callout.purple::before { background: var(--purple); }
+
+.callout-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.callout.teal .callout-label { color: var(--teal); }
+.callout.cyan .callout-label { color: var(--cyan); }
+.callout.purple .callout-label { color: var(--purple); }
+
+.callout p {
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.callout strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* ─── FLOW DIAGRAM ───────────────────────────────── */
+.flow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0;
+  margin: 40px 0;
+  position: relative;
+}
+
+.flow-step {
+  padding: 24px 20px 24px 28px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-dim);
+  border-right: none;
+  position: relative;
+  transition: background 0.2s ease;
+}
+
+.flow-step:last-child {
+  border-right: 1px solid var(--border-dim);
+}
+
+.flow-step:hover {
+  background: var(--bg-raised);
+}
+
+.flow-step::after {
+  content: '→';
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--teal);
+  font-size: 18px;
+  z-index: 2;
+  background: var(--bg-void);
+  padding: 2px 0;
+}
+
+.flow-step:last-child::after { display: none; }
+
+.step-num {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--border-hi);
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+.step-title {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.step-body {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.step-badge {
+  display: inline-block;
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 3px 8px;
+  border-radius: 2px;
+  letter-spacing: 0.1em;
+}
+
+.badge-teal { background: var(--teal-glow); color: var(--teal); border: 1px solid var(--teal-dim); }
+.badge-cyan { background: var(--cyan-glow); color: var(--cyan); border: 1px solid var(--cyan-dim); }
+.badge-purple { background: var(--purple-glow); color: var(--purple); border: 1px solid var(--purple-dim); }
+
+/* ─── CODE BLOCK ─────────────────────────────────── */
+.code-wrap {
+  background: var(--bg-base);
+  border: 1px solid var(--border-mid);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 24px 0;
+}
+
+.code-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-dim);
+  background: var(--bg-surface);
+}
+
+.code-lang {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.code-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.code-dots span {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--border-hi);
+}
+
+pre {
+  padding: 20px 20px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.7;
+}
+
+.kw  { color: var(--purple); }
+.fn  { color: var(--cyan); }
+.str { color: var(--teal); }
+.cm  { color: var(--text-muted); font-style: italic; }
+.num { color: #f0a05a; }
+.op  { color: var(--text-secondary); }
+
+/* ─── SPEC TABLE ─────────────────────────────────── */
+.spec-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  font-size: 12px;
+}
+
+.spec-table thead th {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: left;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-mid);
+  background: var(--bg-surface);
+}
+
+.spec-table tbody tr {
+  border-bottom: 1px solid var(--border-dim);
+  transition: background 0.15s ease;
+}
+
+.spec-table tbody tr:hover {
+  background: var(--bg-surface);
+}
+
+.spec-table td {
+  padding: 12px 16px;
+  color: var(--text-secondary);
+  vertical-align: top;
+}
+
+.spec-table td:first-child {
+  font-family: var(--font-mono);
+  color: var(--cyan);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.spec-table td strong {
+  color: var(--text-primary);
+}
+
+/* ─── STAT GRID ──────────────────────────────────── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1px;
+  background: var(--border-dim);
+  border: 1px solid var(--border-dim);
+  margin: 32px 0;
+}
+
+.stat-cell {
+  background: var(--bg-surface);
+  padding: 24px 20px;
+  text-align: center;
+}
+
+.stat-val {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, var(--teal), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ─── 2-COL ──────────────────────────────────────── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin: 24px 0;
+}
+
+@media (max-width: 700px) {
+  .two-col { grid-template-columns: 1fr; }
+  .flow { grid-template-columns: 1fr; }
+  .flow-step { border-right: 1px solid var(--border-dim); border-bottom: none; }
+  .flow-step::after { content: '↓'; right: auto; bottom: -14px; top: auto; left: 50%; transform: translateX(-50%); }
+  .container { padding: 0 20px; }
+}
+
+/* ─── CHAIN PILL ROW ─────────────────────────────── */
+.chain-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 20px 0;
+}
+
+.chain-pill {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 5px 12px;
+  border-radius: 2px;
+  border: 1px solid var(--border-mid);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+
+.chain-pill.active {
+  border-color: var(--teal-dim);
+  background: var(--teal-glow);
+  color: var(--teal);
+}
+
+/* ─── ATTACK TABLE ───────────────────────────────── */
+.risk-row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  gap: 16px;
+  align-items: start;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border-dim);
+}
+
+.risk-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.risk-title {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.risk-body {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.risk-sev {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 3px 8px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.sev-hi  { background: rgba(255,80,80,0.1); color: #ff5050; border: 1px solid rgba(255,80,80,0.3); }
+.sev-med { background: rgba(240,160,90,0.1); color: #f0a05a; border: 1px solid rgba(240,160,90,0.3); }
+
+/* ─── TIMELINE ───────────────────────────────────── */
+.timeline {
+  margin: 32px 0;
+  position: relative;
+  padding-left: 28px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--teal), var(--purple), transparent);
+}
+
+.tl-item {
+  position: relative;
+  margin-bottom: 28px;
+}
+
+.tl-item::before {
+  content: '';
+  position: absolute;
+  left: -32px;
+  top: 6px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--teal);
+  border: 2px solid var(--bg-void);
+}
+
+.tl-date {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--teal);
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+
+.tl-title {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.tl-body {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ─── INLINE BADGE ───────────────────────────────── */
+.ibadge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 2px;
+  vertical-align: middle;
+  letter-spacing: 0.08em;
+}
+
+/* ─── FOOTER ─────────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--border-dim);
+  padding: 40px 0 60px;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.footer-brand {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+.footer-brand em {
+  font-style: normal;
+  color: var(--teal);
+}
+
+.footer-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+/* ─── NAV BAR ────────────────────────────────────── */
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 44px;
+  background: rgba(12,13,15,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-dim);
+  display: flex;
+  align-items: center;
+  padding: 0 40px;
+  z-index: 100;
+  gap: 32px;
+}
+
+.topbar-brand {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--teal);
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+
+.topbar-links {
+  display: flex;
+  gap: 24px;
+  margin-left: auto;
+}
+
+.topbar-links a {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  text-decoration: none;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+
+.topbar-links a:hover { color: var(--teal); }
+
+/* ─── MISC ───────────────────────────────────────── */
+.mt-16 { margin-top: 16px; }
+.mt-24 { margin-top: 24px; }
+.mt-32 { margin-top: 32px; }
+
+.inline-code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--bg-raised);
+  padding: 1px 6px;
+  border-radius: 2px;
+  color: var(--cyan);
+  border: 1px solid var(--border-mid);
+}
+
+p + p { margin-top: 12px; }
+
+.body-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.9;
+  max-width: 780px;
+}
+
+.body-text strong { color: var(--text-primary); }
+.body-text .accent { color: var(--teal); }
+
+hr.rule {
+  border: none;
+  border-top: 1px solid var(--border-dim);
+  margin: 32px 0;
+}
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topbar">
+  <a class="topbar-brand" href="#">x402</a>
+  <div class="topbar-links">
+    <a href="#origin">Origin</a>
+    <a href="#protocol">Protocol</a>
+    <a href="#encryption">Encryption</a>
+    <a href="#implementation">Implement</a>
+    <a href="#security">Security</a>
+    <a href="#ecosystem">Ecosystem</a>
+  </div>
+</nav>
+
+<!-- COVER -->
+<div class="cover" style="padding-top: 80px;">
+  <div class="cover-orb orb-teal"></div>
+  <div class="cover-orb orb-purple"></div>
+  <div class="cover-orb orb-cyan"></div>
+
+  <div class="cover-inner">
+    <div class="cover-eyebrow">
+      <span class="cover-tag">LIVE STANDARD · x402 Foundation</span>
+    </div>
+
+    <h1 class="cover-title">
+      <span class="title-main">x402</span>
+      <span class="title-sub">Agentic Payments Protocol — Encryption Standard & Implementation Guide</span>
+    </h1>
+
+    <div class="cover-meta">
+      <div class="meta-item">
+        <span class="meta-label">Protocol Ver</span>
+        <span class="meta-val">V2 / Dec 2025</span>
+      </div>
+      <div class="cover-divider"></div>
+      <div class="meta-item">
+        <span class="meta-label">Total Volume</span>
+        <span class="meta-val">~$50M+</span>
+      </div>
+      <div class="cover-divider"></div>
+      <div class="meta-item">
+        <span class="meta-label">Transactions</span>
+        <span class="meta-val">165M+</span>
+      </div>
+      <div class="cover-divider"></div>
+      <div class="meta-item">
+        <span class="meta-label">Active Agents</span>
+        <span class="meta-val">69,000</span>
+      </div>
+      <div class="cover-divider"></div>
+      <div class="meta-item">
+        <span class="meta-label">Steward</span>
+        <span class="meta-val">Linux Foundation</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Read</span>
+    <div class="scroll-line"></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+<!-- ① ORIGIN -->
+<section class="section" id="origin">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <div>
+        <h2 class="section-title">The <em>402</em> Origin Story</h2>
+        <p class="section-desc">A status code reserved in 1991, finally fulfilled 34 years later.</p>
+      </div>
+    </div>
+
+    <div class="callout teal">
+      <div class="callout-label">Foundation</div>
+      <p>When Tim Berners-Lee and the HTTP/1.0 authors designed the web, they reserved status code <strong>402 "Payment Required"</strong> for a future where the internet could natively transact value. The technology to fulfil it — cheap finality, programmable tokens, machine-readable wallets — didn't exist. It sat unused for three and a half decades.</p>
+    </div>
+
+    <p class="body-text">By 2025, three conditions converged simultaneously: <strong>stablecoins with programmable authorization</strong> (USDC on Layer-2 chains), <strong>sub-cent gas fees</strong> on networks like Base and Solana, and <strong>AI agents capable of signing transactions without human intervention</strong>. Coinbase shipped the first x402 reference implementation on May 6, 2025. The code filled in the blank that HTTP left open.</p>
+
+    <div class="timeline mt-32">
+      <div class="tl-item">
+        <div class="tl-date">1991</div>
+        <div class="tl-title">HTTP/1.0 — 402 Reserved</div>
+        <div class="tl-body">Status code reserved "for future use" in the original HTTP specification. No mechanism is ever standardised.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">MAY 6, 2025</div>
+        <div class="tl-title">x402 V1 Launch — Coinbase</div>
+        <div class="tl-body">Open-sourced under Apache 2.0. TypeScript, Python, and Go SDKs ship alongside Express, Fastify, Next.js, and Axios adapters. USDC on Base Sepolia testnet.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">SEP 23, 2025</div>
+        <div class="tl-title">x402 Foundation — Coinbase × Cloudflare</div>
+        <div class="tl-body">Independent foundation announced. Cloudflare integrates x402 into its Agents SDK and pay-per-crawl bot-mitigation tooling. Google and Visa join as founding members.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">DEC 11, 2025</div>
+        <div class="tl-title">x402 V2 — Reusable Sessions, Multi-Chain, CAIP-2</div>
+        <div class="tl-body">Headers redesigned: <span class="inline-code">X-PAYMENT</span> → <span class="inline-code">PAYMENT-SIGNATURE</span>. Payment requirements moved to a base64-encoded <span class="inline-code">PAYMENT-REQUIRED</span> header. Network IDs switch to CAIP-2 format. Reusable sessions added for high-frequency agentic workflows.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">APR 2, 2026</div>
+        <div class="tl-title">Donated to the Linux Foundation</div>
+        <div class="tl-body">Coinbase transfers governance to the x402 Foundation under the Linux Foundation umbrella. AWS launches Bedrock AgentCore Payments with native x402 support in preview the same month.</div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-cell">
+        <div class="stat-val">165M+</div>
+        <div class="stat-label">Transactions (Apr 2026)</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val">$50M</div>
+        <div class="stat-label">Cumulative Volume</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val">69K</div>
+        <div class="stat-label">Active Agents</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val">22+</div>
+        <div class="stat-label">Facilitators Operating</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val">10K+</div>
+        <div class="stat-label">Paid API Endpoints</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ② PROTOCOL -->
+<section class="section" id="protocol">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <div>
+        <h2 class="section-title">Protocol <em>Architecture</em></h2>
+        <p class="section-desc">The four-party model and one-round-trip payment handshake.</p>
+      </div>
+    </div>
+
+    <p class="body-text">x402 extends a normal HTTP request-response cycle with a single new step: a cryptographically verifiable payment handshake that settles onchain in the background. Everything flows over standard HTTP; the blockchain runs through a <strong>Facilitator</strong> — an optional but recommended service that abstracts node interaction.</p>
+
+    <div class="flow mt-32">
+      <div class="flow-step">
+        <div class="step-num">01</div>
+        <div class="step-title">Client Request</div>
+        <div class="step-body">Agent or app sends a standard GET/POST to a protected endpoint. No credentials attached.</div>
+        <span class="step-badge badge-teal">HTTP REQ</span>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">02</div>
+        <div class="step-title">402 Challenge</div>
+        <div class="step-body">Server returns HTTP 402. Payment terms encoded in the <span class="inline-code">PAYMENT-REQUIRED</span> header (base64 JSON).</div>
+        <span class="step-badge badge-cyan">HTTP 402</span>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">03</div>
+        <div class="step-title">Client Signs</div>
+        <div class="step-body">Client reads the terms, generates an EIP-3009 / EIP-712 typed-data signature, attaches it as <span class="inline-code">PAYMENT-SIGNATURE</span> header, and retries.</div>
+        <span class="step-badge badge-purple">SIGN + RETRY</span>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">04</div>
+        <div class="step-title">Facilitator Verify</div>
+        <div class="step-body">Server forwards payload to Facilitator's <span class="inline-code">POST /verify</span>. Facilitator confirms signature validity and settles onchain.</div>
+        <span class="step-badge badge-teal">SETTLE</span>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">05</div>
+        <div class="step-title">Resource Served</div>
+        <div class="step-body">Server returns the resource with <span class="inline-code">PAYMENT-RESPONSE</span> receipt header. Entire flow: one round trip, &lt;200ms typical.</div>
+        <span class="step-badge badge-cyan">200 OK</span>
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text-primary);margin-top:40px;margin-bottom:16px;">PAYMENT-REQUIRED Header Schema <span class="ibadge badge-teal">V2</span></h3>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-lang">JSON / Base64-encoded in header</span>
+      </div>
+      <pre><span class="cm">// Decoded from PAYMENT-REQUIRED header (base64)</span>
+{
+  <span class="str">"scheme"</span>:    <span class="str">"exact"</span>,
+  <span class="str">"network"</span>:   <span class="str">"eip155:8453"</span>,          <span class="cm">// CAIP-2 — Base mainnet</span>
+  <span class="str">"maxAmount"</span>: <span class="str">"10000"</span>,               <span class="cm">// In token base units (6-decimal USDC)</span>
+  <span class="str">"asset"</span>:     <span class="str">"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"</span>,
+  <span class="str">"payTo"</span>:     <span class="str">"0xServerWalletAddress"</span>,
+  <span class="str">"resource"</span>:  <span class="str">"https://api.example.com/data"</span>,
+  <span class="str">"description"</span>: <span class="str">"Real-time market snapshot"</span>
+}</pre>
+    </div>
+
+    <div class="callout cyan mt-16">
+      <div class="callout-label">Note on V2 Header Rename</div>
+      <p>V1 used non-standard <strong>X-PAYMENT</strong> and <strong>X-PAYMENT-RESPONSE</strong> headers. V2 drops the <span class="inline-code">X-</span> prefix (RFC convention for experimental headers was deprecated in RFC 6648). All new implementations should use <span class="inline-code">PAYMENT-SIGNATURE</span> and <span class="inline-code">PAYMENT-RESPONSE</span>. V2 SDKs remain backward-compatible with V1 servers.</p>
+    </div>
+
+    <h3 style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text-primary);margin-top:40px;margin-bottom:12px;">Supported Networks <span class="ibadge badge-teal">CAIP-2</span></h3>
+
+    <div class="chain-row">
+      <span class="chain-pill active">eip155:8453 — Base</span>
+      <span class="chain-pill active">solana:mainnet</span>
+      <span class="chain-pill">eip155:42161 — Arbitrum</span>
+      <span class="chain-pill">eip155:137 — Polygon</span>
+      <span class="chain-pill">stellar:mainnet</span>
+      <span class="chain-pill">eip155:1 — Ethereum</span>
+    </div>
+    <p style="font-size:11px;color:var(--text-muted);margin-top:6px;">Base and Solana are most active. Free public Coinbase facilitators available for both.</p>
+  </div>
+</section>
+
+<!-- ③ ENCRYPTION -->
+<section class="section" id="encryption">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <div>
+        <h2 class="section-title">Encryption <em>Standard</em></h2>
+        <p class="section-desc">EIP-3009, EIP-712 typed-data, and the cross-layer trust model.</p>
+      </div>
+    </div>
+
+    <div class="callout purple">
+      <div class="callout-label">Core Insight</div>
+      <p>x402 does not invent a new cryptographic primitive. It combines two Ethereum standards — <strong>EIP-712</strong> (structured data hashing + signing) and <strong>EIP-3009</strong> (gasless token transfer authorization) — to produce a payment payload that is verifiable both off-chain (by the facilitator) and on-chain (by the USDC contract).</p>
+    </div>
+
+    <div class="two-col mt-24">
+      <div class="callout teal" style="margin-bottom:0;">
+        <div class="callout-label">EIP-712 — Typed Data Signing</div>
+        <p>Structures arbitrary data into a canonical hash that wallets can display to users in a human-readable format. The signature covers: <strong>domain separator</strong> (contract address + chain ID), <strong>type hash</strong> (the exact function signature), and the <strong>message fields</strong>. Prevents cross-contract replay by binding each signature to a specific domain.</p>
+      </div>
+      <div class="callout cyan" style="margin-bottom:0;">
+        <div class="callout-label">EIP-3009 — TransferWithAuthorization</div>
+        <p>An ERC-20 extension that lets a token holder sign an off-chain authorization allowing a third party to move tokens on their behalf. The core function takes seven fields: <strong>from, to, value, validAfter, validBefore, nonce,</strong> and an EIP-712 signature. Enables gasless transfers — the facilitator sponsors gas, the payer only needs USDC.</p>
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text-primary);margin-top:40px;margin-bottom:12px;">PAYMENT-SIGNATURE Payload Structure</h3>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-lang">JSON — PAYMENT-SIGNATURE header value (base64)</span>
+      </div>
+      <pre>{
+  <span class="str">"scheme"</span>:      <span class="str">"exact"</span>,
+  <span class="str">"network"</span>:     <span class="str">"eip155:8453"</span>,
+  <span class="str">"payload"</span>: {
+    <span class="str">"signature"</span>:  <span class="str">"0xabc123...eip712sig"</span>,     <span class="cm">// EIP-712 over the message below</span>
+    <span class="str">"authorization"</span>: {
+      <span class="str">"from"</span>:        <span class="str">"0xAgentWallet"</span>,
+      <span class="str">"to"</span>:          <span class="str">"0xServerWallet"</span>,
+      <span class="str">"value"</span>:       <span class="str">"10000"</span>,              <span class="cm">// USDC base units ($0.01)</span>
+      <span class="str">"validAfter"</span>:  <span class="num">0</span>,
+      <span class="str">"validBefore"</span>: <span class="num">1748991600</span>,           <span class="cm">// Unix timestamp expiry</span>
+      <span class="str">"nonce"</span>:       <span class="str">"0x7f3a...random32bytes"</span>  <span class="cm">// Replay protection</span>
+    }
+  }
+}</pre>
+    </div>
+
+    <h3 style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text-primary);margin-top:40px;margin-bottom:16px;">Signature Field Reference</h3>
+
+    <table class="spec-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>from</td>
+          <td>address</td>
+          <td><strong>Payer wallet.</strong> The agent's Ethereum address whose USDC balance will be debited.</td>
+        </tr>
+        <tr>
+          <td>to</td>
+          <td>address</td>
+          <td><strong>Payee wallet.</strong> The server's <span class="inline-code">payTo</span> address from the 402 challenge.</td>
+        </tr>
+        <tr>
+          <td>value</td>
+          <td>uint256</td>
+          <td><strong>Amount in token base units.</strong> USDC has 6 decimals — $0.01 = <span class="inline-code">10000</span>.</td>
+        </tr>
+        <tr>
+          <td>validAfter</td>
+          <td>uint256</td>
+          <td><strong>Unix timestamp.</strong> Signature not valid before this time. Usually <span class="inline-code">0</span>.</td>
+        </tr>
+        <tr>
+          <td>validBefore</td>
+          <td>uint256</td>
+          <td><strong>Expiry timestamp.</strong> Signature invalid after this point — primary replay mitigation.</td>
+        </tr>
+        <tr>
+          <td>nonce</td>
+          <td>bytes32</td>
+          <td><strong>Random nonce.</strong> Consumed on-chain after first use. Prevents replay of the same auth.</td>
+        </tr>
+        <tr>
+          <td>signature</td>
+          <td>bytes</td>
+          <td><strong>EIP-712 sig (r, s, v).</strong> Signs the EIP-712 typed hash of the authorization struct above.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout teal mt-24">
+      <div class="callout-label">Permit2 Path (Alternative)</div>
+      <p>For tokens without native EIP-3009 support, x402 V2 also supports <strong>Uniswap's Permit2</strong> contract — a universal approval mechanism deployed on all major EVM chains. Permit2 brings the same gasless signed-transfer pattern to any ERC-20. The facilitator resolves which signing path to use based on the token contract queried at runtime.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ④ IMPLEMENTATION -->
+<section class="section" id="implementation">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <div>
+        <h2 class="section-title"><em>Implementation</em> Guide</h2>
+        <p class="section-desc">Server-side protection, Python client agent, and Circle MPC wallet integration.</p>
+      </div>
+    </div>
+
+    <!-- 4A SERVER -->
+    <h3 style="font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text-primary);margin-bottom:16px;">A — Protecting an Endpoint (Node/Express)</h3>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-lang">TypeScript / Express — x402 V2</span>
+      </div>
+      <pre><span class="kw">import</span> express <span class="kw">from</span> <span class="str">'express'</span>
+<span class="kw">import</span> { paymentMiddleware } <span class="kw">from</span> <span class="str">'@coinbase/x402-express'</span>
+
+<span class="kw">const</span> app = <span class="fn">express</span>()
+
+<span class="cm">// Wrap protected routes with payment middleware</span>
+app.<span class="fn">use</span>(
+  <span class="fn">paymentMiddleware</span>(<span class="str">'0xYourServerWalletAddress'</span>, {
+    <span class="str">'/api/data'</span>: {
+      amount:  <span class="str">'0.01'</span>,                           <span class="cm">// USD value string</span>
+      asset:   <span class="str">'0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'</span>,  <span class="cm">// USDC Base</span>
+      network: <span class="str">'eip155:8453'</span>                     <span class="cm">// CAIP-2</span>
+    },
+    <span class="str">'/api/inference'</span>: { amount: <span class="str">'0.001'</span>, asset: <span class="str">'USDC-BASE'</span>, network: <span class="str">'eip155:8453'</span> }
+  })
+)
+
+app.<span class="fn">get</span>(<span class="str">'/api/data'</span>, (req, res) => {
+  res.<span class="fn">json</span>({ result: <span class="str">'paid content'</span> })
+})
+
+app.<span class="fn">listen</span>(<span class="num">3000</span>)</pre>
+    </div>
+
+    <!-- 4B PYTHON CLIENT -->
+    <h3 style="font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text-primary);margin-top:40px;margin-bottom:16px;">B — Python Agent Client</h3>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-lang">Python 3.10+ — pip install x402-python</span>
+      </div>
+      <pre><span class="kw">import</span> os
+<span class="kw">from</span> x402 <span class="kw">import</span> create_client
+
+<span class="cm"># Wallet private key — load from env, never hardcode</span>
+PRIVATE_KEY = os.environ[<span class="str">"AGENT_PRIVATE_KEY"</span>]
+
+<span class="cm"># Build an x402-aware httpx client</span>
+client = <span class="fn">create_client</span>(
+    private_key=PRIVATE_KEY,
+    network=<span class="str">"eip155:8453"</span>,       <span class="cm"># Base mainnet</span>
+    max_amount=<span class="str">"0.05"</span>,           <span class="cm"># Spending cap per request (USD)</span>
+)
+
+<span class="cm"># First request returns 402; client auto-signs and retries</span>
+response = client.<span class="fn">get</span>(<span class="str">"https://api.example.com/data"</span>)
+<span class="fn">print</span>(response.<span class="fn">json</span>())
+
+<span class="cm"># Payment receipt is available in the response header</span>
+receipt = response.headers.get(<span class="str">"payment-response"</span>)
+<span class="fn">print</span>(<span class="str">"tx:"</span>, receipt)</pre>
+    </div>
+
+    <!-- 4C FASTAPI -->
+    <h3 style="font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text-primary);margin-top:40px;margin-bottom:16px;">C — FastAPI Server (Python)</h3>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-lang">Python / FastAPI — x402 middleware</span>
+      </div>
+      <pre><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+<span class="kw">from</span> x402.fastapi <span class="kw">import</span> X402Middleware, PaymentConfig
+
+app = <span class="fn">FastAPI</span>()
+
+app.<span class="fn">add_middleware</span>(
+    X402Middleware,
+    wallet_address=<span class="str">"0xYourServerWallet"</span>,
+    routes={
+        <span class="str">"/inference"</span>: <span class="fn">PaymentConfig</span>(amount=<span class="str">"0.001"</span>, network=<span class="str">"eip155:8453"</span>),
+        <span class="str">"/embeddings"</span>: <span class="fn">PaymentConfig</span>(amount=<span class="str">"0.0005"</span>, network=<span class="str">"eip155:8453"</span>),
+    }
+)
+
+<span class="op">@</span>app.<span class="fn">get</span>(<span class="str">"/inference"</span>)
+<span class="kw">async def</span> <span class="fn">run_inference</span>(prompt: str):
+    <span class="kw">return</span> { <span class="str">"result"</span>: <span class="str">"..."</span> }    <span class="cm"># Only reached post-payment</span></pre>
+    </div>
+
+    <!-- 4D CIRCLE MPC -->
+    <h3 style="font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text-primary);margin-top:40px;margin-bottom:16px;">D — Circle MPC Wallet (Keyless Agent)</h3>
+
+    <div class="callout cyan">
+      <div class="callout-label">Recommended Pattern for AGI Agents</div>
+      <p>Circle's reference architecture provisions an <strong>MPC-backed developer wallet</strong> — the agent never holds raw private keys. When an x402 paywall is hit, the agent calls the <strong>Circle Signing API</strong> to produce the EIP-712 signature, then posts the result via <span class="inline-code">PAYMENT-SIGNATURE</span>. This is the canonical pattern for agent payment infrastructure with auditability.</p>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-lang">Python — Circle SDK + x402 manual flow</span>
+      </div>
+      <pre><span class="kw">from</span> cdp <span class="kw">import</span> CdpClient
+<span class="kw">import</span> httpx, json, base64, time, os
+
+cdp = <span class="fn">CdpClient</span>(api_key=os.environ[<span class="str">"CDP_API_KEY"</span>])
+wallet = cdp.wallets.<span class="fn">create</span>(network_id=<span class="str">"base-mainnet"</span>)
+
+<span class="cm"># Step 1: Probe the endpoint — expect 402</span>
+r = httpx.<span class="fn">get</span>(<span class="str">"https://api.example.com/data"</span>)
+<span class="kw">assert</span> r.status_code == <span class="num">402</span>
+
+<span class="cm"># Step 2: Decode payment requirements</span>
+req = json.<span class="fn">loads</span>(base64.<span class="fn">b64decode</span>(r.headers[<span class="str">"payment-required"</span>]))
+
+<span class="cm"># Step 3: Build EIP-3009 authorization struct</span>
+auth = {
+    <span class="str">"from"</span>:        wallet.default_address,
+    <span class="str">"to"</span>:          req[<span class="str">"payTo"</span>],
+    <span class="str">"value"</span>:       req[<span class="str">"maxAmount"</span>],
+    <span class="str">"validAfter"</span>:  <span class="num">0</span>,
+    <span class="str">"validBefore"</span>: <span class="fn">int</span>(time.<span class="fn">time</span>()) + <span class="num">300</span>,  <span class="cm"># 5-min window</span>
+    <span class="str">"nonce"</span>:       os.urandom(<span class="num">32</span>).<span class="fn">hex</span>(),
+}
+
+<span class="cm"># Step 4: Sign via CDP (no raw key exposure)</span>
+sig = wallet.<span class="fn">sign_typed_data</span>(domain=<span class="fn">build_domain</span>(req), message=auth)
+
+<span class="cm"># Step 5: Encode and retry</span>
+payload = base64.<span class="fn">b64encode</span>(json.<span class="fn">dumps</span>({
+    <span class="str">"scheme"</span>: <span class="str">"exact"</span>, <span class="str">"network"</span>: req[<span class="str">"network"</span>],
+    <span class="str">"payload"</span>: { <span class="str">"signature"</span>: sig, <span class="str">"authorization"</span>: auth }
+}).<span class="fn">encode</span>()).<span class="fn">decode</span>()
+
+result = httpx.<span class="fn">get</span>(<span class="str">"https://api.example.com/data"</span>,
+    headers={ <span class="str">"payment-signature"</span>: payload })
+<span class="fn">print</span>(result.<span class="fn">json</span>())</pre>
+    </div>
+
+    <h3 style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text-primary);margin-top:40px;margin-bottom:16px;">Quick SDK Reference</h3>
+
+    <table class="spec-table">
+      <thead>
+        <tr><th>SDK / Package</th><th>Language</th><th>Role</th><th>Source</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>@coinbase/x402</td>
+          <td>TypeScript</td>
+          <td>Official reference — server + client</td>
+          <td>github.com/coinbase/x402</td>
+        </tr>
+        <tr>
+          <td>x402-python</td>
+          <td>Python</td>
+          <td>Client + FastAPI/Flask middleware</td>
+          <td>github.com/coinbase/x402</td>
+        </tr>
+        <tr>
+          <td>cdp-sdk</td>
+          <td>Python</td>
+          <td>CDP wallet + keyless signing for agents</td>
+          <td>docs.cdp.coinbase.com</td>
+        </tr>
+        <tr>
+          <td>a2a-x402</td>
+          <td>Python / TS</td>
+          <td>Agent-to-Agent payment extension</td>
+          <td>google/a2a-x402</td>
+        </tr>
+        <tr>
+          <td>@x402/axios</td>
+          <td>TypeScript</td>
+          <td>Drop-in Axios adapter — auto handles 402</td>
+          <td>github.com/coinbase/x402</td>
+        </tr>
+        <tr>
+          <td>x402-go</td>
+          <td>Go</td>
+          <td>Official Go implementation (server/client)</td>
+          <td>github.com/coinbase/x402</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ⑤ SECURITY -->
+<section class="section" id="security">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <div>
+        <h2 class="section-title">Security <em>Considerations</em></h2>
+        <p class="section-desc">Five known attack vectors from formal analysis (arXiv:2605.11781) and mitigations.</p>
+      </div>
+    </div>
+
+    <div class="callout purple">
+      <div class="callout-label">Formal Analysis — May 2026</div>
+      <p>A peer-reviewed paper formally analysed x402 and identified five concrete attack classes across the authorization, binding, replay, and web-layer handling stages. The core structural risk: x402 bridges a <strong>synchronous HTTP layer</strong> with an <strong>asynchronous blockchain settlement layer</strong> via an off-chain facilitator whose correctness is neither enforced by the protocol nor verifiable by the client at request time.</p>
+    </div>
+
+    <div class="mt-24">
+      <div class="risk-row">
+        <span class="risk-num">I</span>
+        <div>
+          <div class="risk-title">Authorization Stripping</div>
+          <div class="risk-body">A malicious or compromised server accepts payment but returns a stale or incorrect resource. The client has no in-band proof that the resource served corresponds to the payment authorization signed.</div>
+        </div>
+        <span class="risk-sev sev-hi">HIGH</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-num">II</span>
+        <div>
+          <div class="risk-title">Signature Replay</div>
+          <div class="risk-body">If <span class="inline-code">validBefore</span> is set far in the future and the nonce is reused (e.g., server logs it but doesn't enforce uniqueness on-chain), an attacker who captures a signed payload can resubmit it for additional payments.</div>
+        </div>
+        <span class="risk-sev sev-hi">HIGH</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-num">III</span>
+        <div>
+          <div class="risk-title">Web-Layer Binding Attack</div>
+          <div class="risk-body">A rogue x402 endpoint presents a legitimate-looking 402 challenge but substitutes its own <span class="inline-code">payTo</span> address or a high-value EIP-2612 Permit payload. Because wallets don't natively render EIP-712 structs, users/agents may sign without verifying the destination.</div>
+        </div>
+        <span class="risk-sev sev-hi">HIGH</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-num">IV</span>
+        <div>
+          <div class="risk-title">Facilitator Trust Gap</div>
+          <div class="risk-body">The facilitator's <span class="inline-code">POST /verify</span> response is trusted by the server with no on-chain proof at request time. A compromised facilitator can confirm payments that never settled, causing the server to serve resources for free.</div>
+        </div>
+        <span class="risk-sev sev-med">MED</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-num">V</span>
+        <div>
+          <div class="risk-title">Cross-Chain Confusion</div>
+          <div class="risk-body">V1 used informal network strings ("base-sepolia"); V2 mandates CAIP-2 format. Mixed-version deployments may mis-route payments to the wrong chain or accept testnet authorizations on mainnet if chain ID validation is not enforced.</div>
+        </div>
+        <span class="risk-sev sev-med">MED</span>
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text-primary);margin-top:40px;margin-bottom:16px;">Mitigation Checklist</h3>
+
+    <table class="spec-table">
+      <thead>
+        <tr><th>Area</th><th>Recommendation</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Replay</td>
+          <td>Always set <span class="inline-code">validBefore</span> to ≤ 5 minutes from now. Use random 32-byte nonces. Maintain a nonce registry off-chain; cross-check with on-chain USDC nonce map.</td>
+        </tr>
+        <tr>
+          <td>Binding</td>
+          <td>Agents must validate <span class="inline-code">payTo</span> against a trusted allowlist before signing. Never auto-sign 402 challenges from unknown servers beyond your <span class="inline-code">maxAmount</span> cap.</td>
+        </tr>
+        <tr>
+          <td>Facilitator</td>
+          <td>For high-value flows, run your own facilitator or use a decentralised one (ChaosChain x402). Always verify the on-chain transaction hash before serving premium resources.</td>
+        </tr>
+        <tr>
+          <td>Chain Confusion</td>
+          <td>Strictly enforce CAIP-2 identifiers. Reject any payment requirement whose <span class="inline-code">network</span> field doesn't match your configured chain. Never accept testnet IDs on production.</td>
+        </tr>
+        <tr>
+          <td>Spending Caps</td>
+          <td>Implement per-tx, per-day, and per-domain spending caps at the agent wallet layer (ERC-4337 smart wallets support this natively with CardZero / AgentCore patterns).</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ⑥ ECOSYSTEM -->
+<section class="section" id="ecosystem">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <div>
+        <h2 class="section-title">Ecosystem <em>&amp; Integrations</em></h2>
+        <p class="section-desc">Foundation members, live integrations, and the AGI agent commerce stack.</p>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h3 style="font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--teal);margin-bottom:16px;letter-spacing:0.02em;">Foundation Members</h3>
+        <table class="spec-table">
+          <thead><tr><th>Org</th><th>Integration</th></tr></thead>
+          <tbody>
+            <tr><td>Coinbase</td><td>Protocol author; CDP wallet + facilitator</td></tr>
+            <tr><td>Cloudflare</td><td>Agents SDK, pay-per-crawl middleware</td></tr>
+            <tr><td>Google</td><td>Agent Payments Protocol (AP2) integration</td></tr>
+            <tr><td>Visa</td><td>Trusted Agent Protocol (TAP) — fiat bridge</td></tr>
+            <tr><td>Stripe</td><td>Agent Commerce Protocol (ACP) rails</td></tr>
+            <tr><td>AWS</td><td>Bedrock AgentCore Payments (Preview)</td></tr>
+            <tr><td>Circle</td><td>MPC wallet + USDC signing reference</td></tr>
+            <tr><td>Anthropic</td><td>Member — ecosystem contributor</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h3 style="font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--cyan);margin-bottom:16px;letter-spacing:0.02em;">Live Use Cases</h3>
+        <table class="spec-table">
+          <thead><tr><th>Category</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>AI Inference</td><td>Nous Research Hermes 4 — per-prompt billing</td></tr>
+            <tr><td>Data APIs</td><td>13,000+ resources in Bazaar discovery layer</td></tr>
+            <tr><td>Bot Mitigation</td><td>Cloudflare pay-per-crawl (not block, price)</td></tr>
+            <tr><td>Agent ↔ Agent</td><td>A2A x402 — service calls between agents</td></tr>
+            <tr><td>Edge Compute</td><td>IoT sensor data, microservices pay-per-call</td></tr>
+            <tr><td>Finance</td><td>FSI audit trail for model input sourcing</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="callout teal mt-32">
+      <div class="callout-label">AGI Framework Note — ENTITY / AiM</div>
+      <p>For multi-agent orchestration frameworks with Ollama-backed nodes, x402 enables <strong>per-inference monetisation</strong> of student-model outputs and <strong>autonomous resource procurement</strong> (vector DB queries, external data APIs) without human-in-the-loop billing cycles. The recommended pattern: provision each agent node with a <strong>CDP-managed wallet</strong> and enforce spending caps at the middleware layer. The LAP identity document can carry the agent's <span class="inline-code">payTo</span> address and per-session spending policy as a memory pointer, making payment intent an intrinsic part of agent identity.</p>
+    </div>
+
+    <div class="code-wrap mt-24">
+      <div class="code-bar">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-lang">Further Reading</span>
+      </div>
+      <pre><span class="teal">x402.org</span>                 Official spec + whitepaper
+<span class="teal">github.com/coinbase/x402</span>  Reference SDKs (Apache 2.0)
+<span class="teal">developers.cloudflare.com/agents/agentic-payments/x402</span>
+<span class="teal">docs.cdp.coinbase.com/x402</span>  CDP + x402 integration docs
+<span class="teal">arxiv.org/abs/2605.11781</span>  Formal security analysis — 5 attacks
+<span class="teal">github.com/Merit-Systems/awesome-x402</span>  Curated ecosystem map
+<span class="teal">eco.com/support/en/articles/14839402</span>  Technical primer (Apr 2026)</pre>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">ENTITY / <em>EVE</em> — Ground Truth Folio</div>
+      <div class="footer-meta">x402 DIGEST · JUNE 2026 · COMPILED FOR AiM AGENT INFRA</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
