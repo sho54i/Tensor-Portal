@@ -15,36 +15,130 @@ function formatTime(iso: string): string {
   return d.toISOString().replace("T", " ").slice(0, 16) + " UTC";
 }
 
+// ── ENT-EVE · Muted mode ─────────────────────────────────────────────
+// DIR reports are markdown exports, so this themes generic semantic tags
+// (not eve- classes). Muted = the monochrome sibling of the vivid TIR/x402
+// folio: Space Grey foundation, black & white type, exactly one teal
+// hairline of chroma. See docs/ent-eve.md › §7 and public/ent-eve.css.
 const REPORT_THEME_CSS = `<style>
-  :root { color-scheme: dark; }
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root {
+    color-scheme: dark;
+    --bg:         #0c0d0f;
+    --surface:    #171b22;
+    --raised:     #1e2330;
+    --base:       #111318;
+    --border:     #252c3a;
+    --border-mid: #2e3748;
+    --text:       #d6dce7;
+    --text-strong:#f3f6fb;
+    --text-muted: #707d92;
+    --hairline:   #009e8c;   /* the single surviving teal thread */
+    --link:       #5fb3a8;
+    --link-hi:    #00c9b1;
+    --display: 'Syne', ui-sans-serif, system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, "Geist Mono", monospace;
+    --body: ui-sans-serif, -apple-system, system-ui, "Segoe UI", sans-serif;
+  }
   html, body {
-    background: #000 !important;
-    color: #ededed !important;
-    font-family: ui-sans-serif, -apple-system, system-ui, sans-serif !important;
+    background: var(--bg) !important;
+    color: var(--text) !important;
+    font-family: var(--body) !important;
+    font-size: 15px;
+    line-height: 1.78;
+    -webkit-font-smoothing: antialiased;
   }
-  h1, h2, h3, h4, h5, h6 { color: #fff !important; }
-  a { color: #f59e0b !important; text-decoration: none; }
-  a:hover { color: #fbbf24 !important; text-decoration: underline; }
-  code, pre {
-    background: #111 !important;
-    color: #e4e4e7 !important;
-    border: 1px solid #1f1f1f !important;
+  body {
+    max-width: 820px !important;
+    margin: 0 auto !important;
+    padding: 52px 36px 112px !important;
+  }
+  ::selection { background: rgba(0,201,177,0.22); color: #fff; }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--display) !important;
+    color: var(--text-strong) !important;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+  h1 {
+    font-weight: 800; font-size: 2.5rem; margin: 0 0 0.6em;
+    letter-spacing: -0.035em;
+    background: linear-gradient(135deg, var(--text-strong) 45%, var(--hairline) 130%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  h2 {
+    font-weight: 700; font-size: 1.55rem;
+    margin: 2.4em 0 0.8em; padding-top: 1.6em;
+    border-top: 1px solid var(--border) !important;
+  }
+  h2::before {                       /* the one teal tick per section */
+    content: ''; display: block;
+    width: 34px; height: 2px; margin-bottom: 1em;
+    background: var(--hairline);
+  }
+  h3 { font-weight: 600; font-size: 1.2rem; margin: 1.8em 0 0.6em; }
+  h4 {
+    font-family: var(--mono) !important; font-weight: 500; font-size: 0.72rem;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    color: var(--text-muted) !important; margin: 1.6em 0 0.5em;
+  }
+  p { margin: 0 0 1.05em; }
+  strong, b { color: var(--text-strong) !important; font-weight: 700; }
+  em { color: #c3cbda; }
+  small { color: var(--text-muted); }
+
+  a { color: var(--link) !important; text-decoration: none; border-bottom: 1px solid rgba(0,158,140,0.3); transition: color .15s, border-color .15s; }
+  a:hover { color: var(--link-hi) !important; border-bottom-color: var(--link-hi); }
+
+  ul, ol { padding-left: 1.4em; margin: 0 0 1.1em; }
+  li { margin: 0.3em 0; }
+  li::marker { color: var(--hairline); }
+
+  code {
+    font-family: var(--mono) !important;
+    background: var(--raised) !important;
+    color: #c5cedd !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 3px; padding: 0.08em 0.4em; font-size: 0.86em;
+  }
+  pre {
+    background: var(--base) !important;
+    border: 1px solid var(--border-mid) !important;
+    border-radius: 5px; padding: 18px 20px; overflow-x: auto;
+    margin: 1.4em 0; font-family: var(--mono) !important;
+    font-size: 0.82rem; line-height: 1.7;
+  }
+  pre code { background: transparent !important; border: 0 !important; padding: 0; color: #c9d2e1 !important; font-size: inherit; }
+
+  table { border-collapse: collapse; width: 100%; margin: 1.5em 0; font-size: 0.86rem; }
+  thead th {
+    font-family: var(--mono) !important; font-size: 0.66rem;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-muted) !important; text-align: left;
+    background: var(--surface) !important;
+    padding: 10px 16px !important;
+    border: 0 !important; border-bottom: 1px solid var(--border-mid) !important;
+  }
+  tbody tr { border-bottom: 1px solid var(--border) !important; transition: background .15s; }
+  tbody tr:hover { background: var(--surface) !important; }
+  td { padding: 11px 16px !important; border: 0 !important; color: var(--text) !important; vertical-align: top; }
+  td:first-child { font-family: var(--mono) !important; color: #9fb6c8 !important; font-size: 0.8rem; }
+
+  blockquote {                       /* → ent-eve callout */
+    background: var(--surface) !important;
+    border: 1px solid var(--border-mid) !important;
+    border-left: 3px solid var(--hairline) !important;
     border-radius: 4px;
-    font-family: ui-monospace, "Geist Mono", monospace !important;
+    margin: 1.5em 0; padding: 18px 22px;
+    color: #aab4c6 !important;
   }
-  code { padding: 0.1em 0.35em; }
-  pre { padding: 12px; overflow-x: auto; }
-  pre code { background: transparent !important; border: 0 !important; padding: 0; }
-  table { border-collapse: collapse; }
-  th, td { border: 1px solid #1f1f1f !important; padding: 6px 10px; }
-  th { background: #0a0a0a !important; color: #fff !important; }
-  blockquote {
-    border-left: 3px solid #f59e0b !important;
-    padding-left: 12px;
-    color: #aaa !important;
-    margin-left: 0;
-  }
-  hr { border: 0; border-top: 1px solid #1f1f1f !important; }
+  blockquote p:last-child { margin-bottom: 0; }
+
+  hr { border: 0; height: 1px; margin: 2.4em 0; background: linear-gradient(to right, var(--hairline), var(--border) 40%, transparent); }
+
+  img { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--border); }
 </style>`;
 
 function themeReport(html: string): string {

@@ -1,0 +1,190 @@
+/* ════════════════════════════════════════════════════════════════════
+   ENT-EVE — Entity Evening
+   The Tensor / ENTITY folio design language.
+   Canonical token + component sheet. Extracted from the x402 folio.
+
+   Two modes share one foundation (Space Grey):
+     • Signature  — vivid teal / cyan / violet. Folios, TIR, feature pages.
+     • Muted      — monochrome black / white / grey, one teal hairline.
+                    Daily reports (DIR). Set <html data-eve="muted">.
+
+   Usage (standalone folio):
+     <link rel="stylesheet" href="/ent-eve.css">
+   Fonts (load once in <head>):
+     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+   ════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ─── Space Grey Foundation ─────────────────────────── */
+  --bg-void:        #0c0d0f;
+  --bg-base:        #111318;
+  --bg-surface:     #171b22;
+  --bg-raised:      #1e2330;
+  --bg-hover:       #242a38;
+  --border-dim:     #252c3a;
+  --border-mid:     #2e3748;
+  --border-hi:      #3d4a62;
+
+  /* ─── Entity Eve Accent Palette (Signature) ─────────── */
+  --teal:           #00c9b1;
+  --teal-dim:       #009e8c;
+  --teal-glow:      rgba(0,201,177,0.12);
+  --cyan:           #00d9f5;
+  --cyan-dim:       #00aac4;
+  --cyan-glow:      rgba(0,217,245,0.10);
+  --purple:         #a259ff;
+  --purple-dim:     #7c3dcb;
+  --purple-glow:    rgba(162,89,255,0.12);
+  --violet:         #6e3fff;
+
+  /* ─── Semantic signal (sparingly) ───────────────────── */
+  --amber:          #f0a05a;
+  --danger:         #ff5050;
+
+  /* ─── Text ──────────────────────────────────────────── */
+  --text-primary:   #e8ecf4;
+  --text-secondary: #8b96ac;
+  --text-muted:     #505a6e;
+  --text-accent:    var(--teal);
+
+  /* ─── Type ──────────────────────────────────────────── */
+  --font-display:   'Syne', sans-serif;
+  --font-mono:      'IBM Plex Mono', ui-monospace, monospace;
+  --font-body:      'Space Mono', ui-monospace, monospace;
+
+  /* ─── Accent role indirection ───────────────────────────
+     Components reference --accent* instead of --teal directly,
+     so the muted mode can re-point them to monochrome. */
+  --accent:         var(--teal);
+  --accent-dim:     var(--teal-dim);
+  --accent-glow:    var(--teal-glow);
+  --accent-2:       var(--cyan);
+
+  /* Rhythm */
+  --rule:           1px solid var(--border-dim);
+  --radius:         4px;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   MUTED MODE — Daily reports. Monochrome on the same Space Grey base.
+   The accent collapses to white; one whisper of teal remains as a
+   hairline so the muted folio still reads as family.
+   ════════════════════════════════════════════════════════════════════ */
+[data-eve="muted"] {
+  --accent:         #e8ecf4;        /* white IS the accent */
+  --accent-dim:     #8b96ac;
+  --accent-glow:    rgba(232,236,244,0.06);
+  --accent-2:       #b9c2d4;
+  --text-accent:    #f3f6fb;
+  --hairline:       var(--teal-dim); /* the single chromatic thread */
+}
+:root { --hairline: var(--teal); }
+
+/* ─── Reset ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; color-scheme: dark; }
+
+body {
+  background: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.7;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Faint grid wash — signature only; muted mode stays clean */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,201,177,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,201,177,0.015) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+[data-eve="muted"] body::before { display: none; }
+
+/* ─── Layout ────────────────────────────────────────────── */
+.eve-container { max-width: 1100px; margin: 0 auto; padding: 0 40px; position: relative; z-index: 1; }
+.eve-section   { padding: 80px 0 60px; border-top: var(--rule); }
+
+/* ─── Section header ────────────────────────────────────── */
+.eve-section-header { display: flex; align-items: flex-start; gap: 24px; margin-bottom: 48px; }
+.eve-section-num    { font-family: var(--font-mono); font-size: 11px; color: var(--accent); letter-spacing: 0.1em; padding-top: 6px; min-width: 32px; }
+.eve-section-title  { font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; color: var(--text-primary); }
+.eve-section-title em { font-style: normal; color: var(--accent); }
+.eve-section-desc   { font-size: 12px; color: var(--text-secondary); margin-top: 10px; line-height: 1.8; max-width: 680px; }
+
+/* ─── Eyebrow / tag ─────────────────────────────────────── */
+.eve-eyebrow { font-family: var(--font-mono); font-size: 10px; font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); }
+.eve-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid var(--accent-dim); background: var(--accent-glow);
+  padding: 6px 16px; border-radius: 2px;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--accent);
+}
+.eve-tag::before { content: ''; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+
+/* ─── Callout card ──────────────────────────────────────── */
+.eve-callout {
+  border: 1px solid var(--border-mid); background: var(--bg-surface);
+  padding: 28px 32px; border-radius: var(--radius);
+  position: relative; overflow: hidden; margin: 24px 0;
+}
+.eve-callout::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--accent); }
+.eve-callout.teal::before   { background: var(--teal); }
+.eve-callout.cyan::before   { background: var(--cyan); }
+.eve-callout.purple::before { background: var(--purple); }
+.eve-callout-label { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; color: var(--accent); }
+.eve-callout p { color: var(--text-secondary); font-size: 13px; line-height: 1.8; }
+.eve-callout strong { color: var(--text-primary); font-weight: 700; }
+
+/* ─── Stat grid ─────────────────────────────────────────── */
+.eve-stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1px; background: var(--border-dim); border: 1px solid var(--border-dim); margin: 32px 0; }
+.eve-stat-cell { background: var(--bg-surface); padding: 24px 20px; text-align: center; }
+.eve-stat-val  { font-family: var(--font-display); font-size: 32px; font-weight: 800; line-height: 1; margin-bottom: 8px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.eve-stat-label{ font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); }
+
+/* ─── Spec table ────────────────────────────────────────── */
+.eve-table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 12px; }
+.eve-table thead th { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); text-align: left; padding: 10px 16px; border-bottom: 1px solid var(--border-mid); background: var(--bg-surface); }
+.eve-table tbody tr { border-bottom: var(--rule); transition: background 0.15s ease; }
+.eve-table tbody tr:hover { background: var(--bg-surface); }
+.eve-table td { padding: 12px 16px; color: var(--text-secondary); vertical-align: top; }
+.eve-table td:first-child { font-family: var(--font-mono); color: var(--accent-2); font-size: 11px; white-space: nowrap; }
+.eve-table td strong { color: var(--text-primary); }
+
+/* ─── Code ──────────────────────────────────────────────── */
+.eve-code-wrap { background: var(--bg-base); border: 1px solid var(--border-mid); border-radius: var(--radius); overflow: hidden; margin: 24px 0; }
+.eve-code-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: var(--rule); background: var(--bg-surface); }
+.eve-code-lang { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); }
+.eve-code-dots { display: flex; gap: 6px; }
+.eve-code-dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--border-hi); }
+.eve-code-wrap pre { padding: 20px; overflow-x: auto; font-family: var(--font-mono); font-size: 11.5px; line-height: 1.7; }
+.eve-kw { color: var(--purple); } .eve-fn { color: var(--cyan); } .eve-str { color: var(--teal); }
+.eve-cm { color: var(--text-muted); font-style: italic; } .eve-num { color: var(--amber); } .eve-op { color: var(--text-secondary); }
+
+/* ─── Inline ────────────────────────────────────────────── */
+.eve-inline-code { font-family: var(--font-mono); font-size: 11px; background: var(--bg-raised); padding: 1px 6px; border-radius: 2px; color: var(--accent-2); border: 1px solid var(--border-mid); }
+.eve-rule { border: none; border-top: var(--rule); margin: 32px 0; }
+.eve-pill { font-family: var(--font-mono); font-size: 10px; padding: 5px 12px; border-radius: 2px; border: 1px solid var(--border-mid); background: var(--bg-surface); color: var(--text-secondary); letter-spacing: 0.05em; }
+.eve-pill.active { border-color: var(--accent-dim); background: var(--accent-glow); color: var(--accent); }
+
+/* ─── Ambient orbs (signature cover) ────────────────────── */
+.eve-orb { position: absolute; border-radius: 50%; filter: blur(100px); pointer-events: none; }
+.eve-orb-teal   { background: radial-gradient(circle, rgba(0,201,177,0.18) 0%, transparent 70%); }
+.eve-orb-purple { background: radial-gradient(circle, rgba(162,89,255,0.14) 0%, transparent 70%); }
+.eve-orb-cyan   { background: radial-gradient(circle, rgba(0,217,245,0.10) 0%, transparent 70%); }
+@keyframes eve-pulse { 0%,100% { opacity: 0.7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.08); } }
+@keyframes eve-fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+[data-eve="muted"] .eve-orb { display: none; }
+
+@media (max-width: 700px) {
+  .eve-container { padding: 0 20px; }
+}
