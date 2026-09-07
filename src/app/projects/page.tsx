@@ -8,6 +8,13 @@ export const metadata = {
 
 const PROJECTS = [
   {
+    id: "draw",
+    name: "DRAW",
+    description: "Vector drawing studio with Apple Pencil support, editable paths, artboards, and SVG/PNG export.",
+    href: "/draw",
+    tag: "DESIGN / VECTOR",
+  },
+  {
     id: "key-viz",
     name: "Key·Viz",
     description: "Spectral MIDI keyboard visualizer — real-time piano heatmaps with harmonic analysis.",
