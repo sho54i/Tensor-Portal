@@ -15,6 +15,13 @@ const PROJECTS = [
     tag: "DESIGN / VECTOR",
   },
   {
+    id: "open3d",
+    name: "Open3D",
+    description: "Parametric CAD in the browser — sketch, extrude, booleans and fillets on an OCCT kernel, Pencil-first, STEP/STL export.",
+    href: "https://open3d-virid.vercel.app",
+    tag: "CAD / 3D",
+  },
+  {
     id: "key-viz",
     name: "Key·Viz",
     description: "Spectral MIDI keyboard visualizer — real-time piano heatmaps with harmonic analysis.",
