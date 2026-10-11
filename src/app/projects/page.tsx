@@ -9,8 +9,8 @@ export const metadata = {
 const PROJECTS = [
   {
     id: "draw",
-    name: "DRAW",
-    description: "Vector drawing studio with Apple Pencil support, editable paths, artboards, and SVG/PNG export.",
+    name: "OPEN-VECTOR",
+    description: "Vector studio with Apple Pencil support, text and fonts, movable tool panels, light/dark themes, and SVG/PNG export.",
     href: "/draw",
     tag: "DESIGN / VECTOR",
   },

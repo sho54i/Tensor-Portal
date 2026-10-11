@@ -1,0 +1,50 @@
+{
+  "schema": "draw-release-v1",
+  "version": "2026.09.08.1",
+  "sequence": 2026090801,
+  "package": "draw-2026.09.08.1.zip",
+  "size": 1193440,
+  "sha256": "1d7e7241e2b73766a0045797904f468a7c676033c57fa242f1a770baf7b387a9",
+  "files": {
+    "vector_pen_tool.html": {
+      "size": 318617,
+      "sha256": "3f6a53a575e25ecbd49c3c3ec4cc530c2799d4d31a433448a59aa3c378d72fe6"
+    },
+    "scripts/local_updater.py": {
+      "size": 13847,
+      "sha256": "16c4beeb84893526bc08226bda9b773d82d2f10c2e2866ce2acb2eca5c802e63"
+    },
+    "Update_DRAW.bat": {
+      "size": 1005,
+      "sha256": "b4c8d28c3d9c7d6e3e6aae52c3a6d8fd2a7573992e247fd8c396b53ccf11c183"
+    },
+    "UPDATE_README.txt": {
+      "size": 1692,
+      "sha256": "713c0129b6e374bcac2d86792e26047cb4681a594c5d244b51c5fd2e1afd388e"
+    },
+    "vendor/PAPER-LICENSE.txt": {
+      "size": 1173,
+      "sha256": "f8833a38807922b4652421eb0cf29065400c55abd6f4832b9c3250dae87e1958"
+    },
+    "vendor/dejavu-LICENSE.txt": {
+      "size": 3859,
+      "sha256": "63d3ba759d12804c5b31a9d5940d855c1820d1f5999e6b0872eb1c7ff045fbc9"
+    },
+    "vendor/draw-fonts.js": {
+      "size": 1970725,
+      "sha256": "49b10cdb4b75607864bb37c6a4df50e419f51e659d8f80719e929c369220fce8"
+    },
+    "vendor/opentype-1.3.4.min.js": {
+      "size": 171001,
+      "sha256": "c0f9c7ca85e18075a8819e5fe2dee6e1d535f9a2269f5314f36cce94a183adba"
+    },
+    "vendor/opentype-LICENSE.txt": {
+      "size": 1085,
+      "sha256": "a5b87c9bc191e7f9c06b07bd7cbbed3ed846dfdb50e859484b2c245aa1ab2e61"
+    },
+    "vendor/paper-core-0.12.18.min.js": {
+      "size": 208492,
+      "sha256": "3a8c73ecdf3929a7fe05f96b82e8146193ea449c5c3e889c5f4fe0184a30ed96"
+    }
+  }
+}
