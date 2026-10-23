@@ -64,7 +64,15 @@ async function getReport(folderEnv: string, slug: string, fileId?: string): Prom
 
   try {
     const files = await listFolder(env.folderId, env.apiKey, env.slug);
-    const html = files.filter((f) => f.mimeType === "text/html" || f.name.endsWith(".html"));
+    // Order by the date in the filename (YYYY-MM-DD, then am<pm), not modifiedTime — re-uploading
+    // a corrected old edition must not make it "latest". Undated names fall back to modifiedTime.
+    const key = (f: DriveFile) => {
+      const m = f.name.match(/(\d{4}-\d{2}-\d{2})(-pm)?/);
+      return m ? m[1] + (m[2] ? "b" : "a") : f.modifiedTime.slice(0, 10);
+    };
+    const html = files
+      .filter((f) => f.mimeType === "text/html" || f.name.endsWith(".html"))
+      .sort((a, b) => key(b).localeCompare(key(a)));
     if (html.length === 0) return { ok: false, reason: "empty" };
 
     const target = fileId ? html.find((f) => f.id === fileId) : html[0];
