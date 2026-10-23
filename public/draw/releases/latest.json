@@ -1,14 +1,14 @@
 {
   "schema": "draw-release-v1",
-  "version": "2026.10.22.2",
-  "sequence": 2026102202,
-  "package": "draw-2026.10.22.2.zip",
-  "size": 1229122,
-  "sha256": "3adf1d84312d8548b8bb4910824645c2f18d00dd77078f9d0b73e20625bf886e",
+  "version": "2026.10.23.1",
+  "sequence": 2026102301,
+  "package": "draw-2026.10.23.1.zip",
+  "size": 1229801,
+  "sha256": "449a4820e7e99dd1527e1ebd112aa4dbdad501ca7529542ce004233aced07dfc",
   "files": {
     "vector_pen_tool.html": {
-      "size": 460455,
-      "sha256": "816aba2db35e6505bac4ddd47cd30587fd9e903ead3c4174b61e558cfd4d0b39"
+      "size": 462751,
+      "sha256": "f5818593a8ca91c1f1046568c8357ef64a7c2f2460251875476cd7e63e5d515f"
     },
     "scripts/local_updater.py": {
       "size": 14729,
