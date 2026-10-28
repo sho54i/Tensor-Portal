@@ -8,6 +8,13 @@ export const metadata = {
 
 const PROJECTS = [
   {
+    id: "hoppr",
+    name: "Hoppr",
+    description: "Live London bus arrivals, nearby stops, saved favourites, and adjustable maps for desktop and mobile.",
+    href: "https://hoppr-mobile.vercel.app",
+    tag: "TRAVEL / LONDON BUSES",
+  },
+  {
     id: "draw",
     name: "OPEN-VECTOR",
     description: "Vector studio with Apple Pencil support, text and fonts, movable tool panels, light/dark themes, and SVG/PNG export.",
